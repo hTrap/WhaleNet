@@ -3,14 +3,19 @@ import WhaleNetwork from '../build/contracts/WhaleNetwork.json'
 import WhaleRewards from '../build/contracts/WhaleRewards.json'
 import getWeb3 from './utils/getWeb3'
 import {Tabs, Tab} from 'material-ui/Tabs'
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import {keystore, txutils} from 'eth-lightwallet'
 import util from 'ethereumjs-util'
 import tx from 'ethereumjs-tx'
-
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
+import Paper from 'material-ui/Paper';
+import Grid from 'material-ui/Grid';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
 import AppBar from 'material-ui/AppBar';
 
@@ -96,7 +101,7 @@ class WhaleCheckForm extends Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-      <RaisedButton type="submit" color="primary" style={{float:'right'}}>Check</RaisedButton>
+      <Button raised type="submit" color="primary" style={{float:'right'}}>Check</Button>
 
       <TextField id="check" label="WhaleCoin Address"
       	value={this.state.value}
@@ -177,7 +182,7 @@ class WhaleCheckForm extends Component {
 //   render() {
 //     return (
 //       <form onSubmit={this.handleSubmit.bind(this)}>
-//         <RaisedButton type="submit"  color="primary">Check Whale Count</RaisedButton>
+//         <Button raised type="submit"  color="primary">Check Whale Count</Button>
 //       </form>
 //
 //     );
@@ -290,7 +295,7 @@ class BecomeWhaleForm extends Component {
       	<TextField label="Private Key"
       	value={this.state.privateKey} onChange={this.handleChange}
       	floatingLabelText="Private Key" />
-        <RaisedButton type="submit" color="primary">Become Whale</RaisedButton>
+        <Button raised type="submit" color="primary">Become Whale</Button>
       </form>
       </div>
       </MuiThemeProvider>
@@ -376,29 +381,61 @@ class App extends Component {
     event.preventDefault();
     ReactDOM.render(<MuiThemeProvider><div>{<BecomeWhaleForm/>}</div></MuiThemeProvider>, document.getElementById('root'));
   }
-
   render() {
     return (  <MuiThemeProvider>
 
 <div>
-<AppBar
-  title={<WhaleCheckForm/>}
-  iconClassNameRight="muidocs-icon-navigation-expand-more"
+<AppBar position="static" color="default">
+       <Toolbar>
+       <Grid container spacing={24}>
 
-/>
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
-      </form>
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
-      </form>
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
-      </form>
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
-      </form>
-      
+         <Grid item xs={12} sm={6}>
+           <Paper>
+         <Typography type="title" color="inherit">
+           Whale Network
+         </Typography>
+         </Paper>
+         </Grid>
+         <Grid item xs={12} sm={6}>
+           <Paper>
+           {<WhaleCheckForm/>}
+
+         </Paper>
+         </Grid>
+         </Grid>
+       </Toolbar>
+     </AppBar>
+
+
+
+
+      <div>
+      <Grid container spacing={24}>
+
+        <Grid item xs={6} sm={3}>
+          <Paper>
+          <form onSubmit={this.handleSubmit.bind(this)}>
+            <Button raised type="submit"  color="primary">Go</Button>
+          </form>
+          </Paper>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <Paper><form onSubmit={this.handleSubmit.bind(this)}>
+            <Button raised type="submit"  color="primary">Go</Button>
+          </form></Paper>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <Paper><form onSubmit={this.handleSubmit.bind(this)}>
+            <Button raised type="submit"  color="primary">Go</Button>
+          </form></Paper>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <Paper><form onSubmit={this.handleSubmit.bind(this)}>
+            <Button raised type="submit"  color="primary">Go</Button>
+          </form></Paper>
+        </Grid>
+      </Grid>
+    </div>
 
   </div>
     </MuiThemeProvider>
