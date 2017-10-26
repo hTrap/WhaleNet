@@ -1,0 +1,123 @@
+import React, { Component } from 'react'
+import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
+import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
+import getWeb3 from '../../utils/getWeb3'
+import Button from 'material-ui/Button';
+import TextField from 'material-ui/TextField';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import ReactDOM from 'react-dom'
+import {keystore, txutils} from 'eth-lightwallet'
+import tx from 'ethereumjs-tx'
+import AppBar from 'material-ui/AppBar';
+import Header from '../header.js'
+
+
+class BecomeWhaleForm extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      privateKey: '',
+      web3: null
+    }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillMount() {
+    // Get network provider and web3 instance.
+    // See utils/getWeb3 for more info.
+
+    getWeb3
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+      // Instantiate contract once web3 provided.
+    })
+    .catch(() => {
+      console.log('Error finding web3.')
+    })
+  }
+
+
+
+		// on change of form values these states are updatd
+	  handleChange(event) {
+	    this.setState({privateKey: event.target.value});
+	  }
+
+
+// on form submit this is the action called
+  handleSubmit(event) {
+    event.preventDefault();
+    event.preventDefault();
+    const contract = require('truffle-contract')
+    const whaleNetwork = contract(WhaleNetwork)
+    const whaleRewards = contract(WhaleRewards)
+    whaleRewards.setProvider(this.state.web3.currentProvider)
+    whaleNetwork.setProvider(this.state.web3.currentProvider)
+
+    // Declaring this for later so we can chain functions on SimpleStorage.
+    var whaleRewardsInstance
+    var whaleNetworkInstance
+
+    // Get accounts.
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      whaleRewards.deployed().then((instance) => {
+        whaleRewardsInstance = instance
+
+        // Stores a given value, 5 by default.
+        return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
+      }).then((result) => {
+        // Get the value from the contract to prove it worked.
+        console.log(result)
+           whaleNetworkInstance = whaleNetwork.at(result);
+           var userAddress = '0x' + keystore._computeAddressFromPrivKey(this.state.privateKey)
+           var txOptions = {
+               nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(userAddress)),
+               gasLimit: this.state.web3.toHex(800000),
+               gasPrice: this.state.web3.toHex(20000000000),
+               to: whaleNetworkInstance.address,
+               value: 5555
+           }
+           var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale',userAddress, txOptions);
+           var privateKey = new Buffer(this.state.privateKey, 'hex');
+           var transaction = new tx(rawTx);
+           transaction.sign(privateKey);
+           var serializedTx = transaction.serialize().toString('hex');
+           this.state.web3.eth.sendRawTransaction(
+           '0x' + serializedTx, function(err, result) {
+               if(err) {
+                   console.log(err);
+               } else {
+                   console.log(result);
+                   ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('root'));
+               }
+           })
+
+
+    })
+  })
+  }
+	// renders the basic form in the root tab space
+  render() {
+    return (
+      <MuiThemeProvider>
+ <div>
+ {<Header/>}
+
+      <form onSubmit={this.handleSubmit}>
+      	<TextField label="Private Key"
+      	value={this.state.privateKey} onChange={this.handleChange}
+      	floatingLabelText="Private Key" />
+        <Button raised type="submit" color="primary">Become Whale</Button>
+      </form>
+      </div>
+      </MuiThemeProvider>
+
+    );
+  }
+}
+
+export default BecomeWhaleForm
