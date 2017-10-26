@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
 import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
 import getWeb3 from '../../utils/getWeb3'
@@ -8,9 +8,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import {keystore, txutils} from 'eth-lightwallet'
 import tx from 'ethereumjs-tx'
-import AppBar from 'material-ui/AppBar';
 import Header from '../header.js'
-
 
 class BecomeWhaleForm extends Component {
   constructor(props) {
@@ -28,27 +26,20 @@ class BecomeWhaleForm extends Component {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
 
-    getWeb3
-    .then(results => {
-      this.setState({
-        web3: results.web3
-      })
+    getWeb3.then(results => {
+      this.setState({web3: results.web3})
       // Instantiate contract once web3 provided.
-    })
-    .catch(() => {
+    }).catch(() => {
       console.log('Error finding web3.')
     })
   }
 
+  // on change of form values these states are updatd
+  handleChange(event) {
+    this.setState({privateKey: event.target.value});
+  }
 
-
-		// on change of form values these states are updatd
-	  handleChange(event) {
-	    this.setState({privateKey: event.target.value});
-	  }
-
-
-// on form submit this is the action called
+  // on form submit this is the action called
   handleSubmit(event) {
     event.preventDefault();
     event.preventDefault();
@@ -72,48 +63,45 @@ class BecomeWhaleForm extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-           whaleNetworkInstance = whaleNetwork.at(result);
-           var userAddress = '0x' + keystore._computeAddressFromPrivKey(this.state.privateKey)
-           var txOptions = {
-               nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(userAddress)),
-               gasLimit: this.state.web3.toHex(800000),
-               gasPrice: this.state.web3.toHex(20000000000),
-               to: whaleNetworkInstance.address,
-               value: 5555
-           }
-           var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale',userAddress, txOptions);
-           var privateKey = new Buffer(this.state.privateKey, 'hex');
-           var transaction = new tx(rawTx);
-           transaction.sign(privateKey);
-           var serializedTx = transaction.serialize().toString('hex');
-           this.state.web3.eth.sendRawTransaction(
-           '0x' + serializedTx, function(err, result) {
-               if(err) {
-                   console.log(err);
-               } else {
-                   console.log(result);
-                   ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('root'));
-               }
-           })
+        whaleNetworkInstance = whaleNetwork.at(result);
+        var userAddress = '0x' + keystore._computeAddressFromPrivKey(this.state.privateKey)
+        var txOptions = {
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(userAddress)),
+          gasLimit: this.state.web3.toHex(800000),
+          gasPrice: this.state.web3.toHex(20000000000),
+          to: whaleNetworkInstance.address,
+          value: 5555
+        }
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', userAddress, txOptions);
+        var privateKey = new Buffer(this.state.privateKey, 'hex');
+        var transaction = new tx(rawTx);
+        transaction.sign(privateKey);
+        var serializedTx = transaction.serialize().toString('hex');
+        this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(result);
+            ReactDOM.render(
+              <div>{result.toString()}</div>, document.getElementById('root'));
+          }
+        })
 
-
+      })
     })
-  })
   }
-	// renders the basic form in the root tab space
+  // renders the basic form in the root tab space
   render() {
     return (
       <MuiThemeProvider>
- <div>
- {<Header/>}
+        <div>
+          {< Header />}
 
-      <form onSubmit={this.handleSubmit}>
-      	<TextField label="Private Key"
-      	value={this.state.privateKey} onChange={this.handleChange}
-      	floatingLabelText="Private Key" />
-        <Button raised type="submit" color="primary">Become Whale</Button>
-      </form>
-      </div>
+          <form onSubmit={this.handleSubmit}>
+            <TextField label="Private Key" value={this.state.privateKey} onChange={this.handleChange} floatingLabelText="Private Key"/>
+            <Button raised type="submit" color="primary">Become Whale</Button>
+          </form>
+        </div>
       </MuiThemeProvider>
 
     );
