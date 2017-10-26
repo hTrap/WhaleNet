@@ -12,7 +12,7 @@ import util from 'ethereumjs-util'
 import tx from 'ethereumjs-tx'
 
 
-
+import AppBar from 'material-ui/AppBar';
 
 
 import './css/oswald.css'
@@ -85,95 +85,105 @@ class WhaleCheckForm extends Component {
            return whaleNetworkInstance.isWhale.call(this.state.value, {from:accounts[0]})
       }).then((result) => {
 
-      ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('result'));
+      ReactDOM.render(<MuiThemeProvider><div>
+  <AppBar
+    title={<WhaleCheckForm/>}
+    iconClassNameRight="muidocs-icon-navigation-expand-more"
+  /><h1>{result.toString()}</h1></div></MuiThemeProvider>, document.getElementById('root'));
     })})
   }
 	// renders the basic form in the root tab space
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
+      <RaisedButton type="submit" color="primary" style={{float:'right'}}>Check</RaisedButton>
+
       <TextField id="check" label="WhaleCoin Address"
       	value={this.state.value}
       	onChange={this.handleChange}
-      	floatingLabelText="WhaleCoin Address" />
-        <RaisedButton type="submit" color="primary">Check</RaisedButton>
+      	floatingLabelText="WhaleCoin Address"
+        style={{
+            backgroundColor: '#ffffff',
+            marginRight: '10px',
+            float: 'right'
+          }}/>
       </form>
 
     );
   }
 }
-
-class WhaleNumberForm extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      storageValue: 0,
-      web3: null
-    }
-  }
-
-  componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
-
-    getWeb3
-    .then(results => {
-      this.setState({
-        web3: results.web3
-      })
-      // Instantiate contract once web3 provided.
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
-    })
-  }
-
-
-
-
-  handleSubmit(event) {
-    event.preventDefault();
-    const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetwork)
-    const whaleRewards = contract(WhaleRewards)
-    whaleRewards.setProvider(this.state.web3.currentProvider)
-    whaleNetwork.setProvider(this.state.web3.currentProvider)
-
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var whaleRewardsInstance
-    var whaleNetworkInstance
-
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
-        whaleRewardsInstance = instance
-
-        // Stores a given value, 5 by default.
-        return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        console.log(result)
-           whaleNetworkInstance = whaleNetwork.at(result );
-           return whaleNetworkInstance.getNumberWhales.call({from:accounts[0]})
-      }).then((result) => {
-
-      ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('result'));
-    })})
-
-
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit.bind(this)}>
-        <RaisedButton type="submit"  color="primary">Check Whale Count</RaisedButton>
-      </form>
-
-    );
-  }
-}
-
+//
+// class WhaleNumberForm extends Component {
+//   constructor(props) {
+//     super(props)
+//
+//     this.state = {
+//       storageValue: 0,
+//       web3: null
+//     }
+//   }
+//
+//   componentWillMount() {
+//     // Get network provider and web3 instance.
+//     // See utils/getWeb3 for more info.
+//
+//     getWeb3
+//     .then(results => {
+//       this.setState({
+//         web3: results.web3
+//       })
+//       // Instantiate contract once web3 provided.
+//     })
+//     .catch(() => {
+//       console.log('Error finding web3.')
+//     })
+//   }
+//
+//
+//
+//
+//   handleSubmit(event) {
+//     event.preventDefault();
+//     const contract = require('truffle-contract')
+//     const whaleNetwork = contract(WhaleNetwork)
+//     const whaleRewards = contract(WhaleRewards)
+//     whaleRewards.setProvider(this.state.web3.currentProvider)
+//     whaleNetwork.setProvider(this.state.web3.currentProvider)
+//
+//     // Declaring this for later so we can chain functions on SimpleStorage.
+//     var whaleRewardsInstance
+//     var whaleNetworkInstance
+//
+//     // Get accounts.
+//     this.state.web3.eth.getAccounts((error, accounts) => {
+//       whaleRewards.deployed().then((instance) => {
+//         whaleRewardsInstance = instance
+//
+//         // Stores a given value, 5 by default.
+//         return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
+//       }).then((result) => {
+//         // Get the value from the contract to prove it worked.
+//         console.log(result)
+//            whaleNetworkInstance = whaleNetwork.at(result );
+//            return whaleNetworkInstance.getNumberWhales.call({from:accounts[0]})
+//       }).then((result) => {
+//
+//       ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('result'));
+//     })})
+//
+//
+//   }
+//
+//   render() {
+//     return (
+//       <form onSubmit={this.handleSubmit.bind(this)}>
+//         <RaisedButton type="submit"  color="primary">Check Whale Count</RaisedButton>
+//       </form>
+//
+//     );
+//   }
+// }
+//
 class BecomeWhaleForm extends Component {
   constructor(props) {
     super(props)
@@ -254,8 +264,11 @@ class BecomeWhaleForm extends Component {
                    console.log(err);
                } else {
                    console.log(result);
-                   ReactDOM.render(<div>{result.toString()}</div>, document.getElementById('result'));
-
+                   ReactDOM.render(<MuiThemeProvider><div>
+               <AppBar
+                 title={<WhaleCheckForm/>}
+                 iconClassNameRight="muidocs-icon-navigation-expand-more"
+               /><h1>{result.toString()}</h1></div></MuiThemeProvider>, document.getElementById('root'));
                }
            })
 
@@ -266,12 +279,21 @@ class BecomeWhaleForm extends Component {
 	// renders the basic form in the root tab space
   render() {
     return (
+      <MuiThemeProvider>
+
+ <div>
+ <AppBar
+   title={<WhaleCheckForm/>}
+   iconClassNameRight="muidocs-icon-navigation-expand-more"
+ />
       <form onSubmit={this.handleSubmit}>
       	<TextField label="Private Key"
       	value={this.state.privateKey} onChange={this.handleChange}
       	floatingLabelText="Private Key" />
         <RaisedButton type="submit" color="primary">Become Whale</RaisedButton>
       </form>
+      </div>
+      </MuiThemeProvider>
 
     );
   }
@@ -350,16 +372,35 @@ class App extends Component {
   onActive(tab) {
     console.log(arguments);
   }
+  handleSubmit(event) {
+    event.preventDefault();
+    ReactDOM.render(<MuiThemeProvider><div>{<BecomeWhaleForm/>}</div></MuiThemeProvider>, document.getElementById('root'));
+  }
 
   render() {
     return (  <MuiThemeProvider>
 
-      <Tabs onChange={this.onChange}>
-        <Tab value="pane-1" label="Whale Status" onActive={this.onActive}>{<WhaleCheckForm/>}</Tab>
-        <Tab value="pane-2" label="Whale Count">{<WhaleNumberForm/>}</Tab>
-        <Tab value="pane-3" label="Become Whale">{<BecomeWhaleForm/>}</Tab>
+<div>
+<AppBar
+  title={<WhaleCheckForm/>}
+  iconClassNameRight="muidocs-icon-navigation-expand-more"
 
-      </Tabs>
+/>
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
+      </form>
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
+      </form>
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
+      </form>
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <RaisedButton type="submit"  color="primary">Go</RaisedButton>
+      </form>
+      
+
+  </div>
     </MuiThemeProvider>
     );
   }
