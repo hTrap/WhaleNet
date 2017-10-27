@@ -143,7 +143,7 @@ class AddModerator extends Component {
 
                 </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Add a Moderator</Button>
+                <Button raised type="submit" color="primary">Add/Update a Moderator</Button>
 
                 </Grid>
                 </Grid>

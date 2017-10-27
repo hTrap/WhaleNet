@@ -62,20 +62,15 @@ class ModeratorAccount extends Component {
           <div>
           {< Header />}
 
-          <h1 className={this.props.classes.paper}>My Whale Account</h1>
+          <h1 className={this.props.classes.paper}>My Moderator Account</h1>
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <Paper className={this.props.classes.paper}>
 
               {<AddModerator/>}
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Paper className={this.props.classes.paper}>
-              {<RemoveModerator/>}
               </Paper>
             </Grid>
           </Grid>
