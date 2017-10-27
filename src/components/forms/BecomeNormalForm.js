@@ -29,15 +29,18 @@ const styles  = {
 };
 
 
-class BecomeNormalForm extends Component {
+class BecomeWhaleForm extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      address: '',
       privateKey: '',
       web3: null
     }
-    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyChange = this.handleKeyChange.bind(this);
+    this.handleAddressChange = this.handleAddressChange.bind(this);
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -54,9 +57,14 @@ class BecomeNormalForm extends Component {
   }
 
   // on change of form values these states are updatd
-  handleChange(event) {
+  handleKeyChange(event) {
     this.setState({privateKey: event.target.value});
   }
+
+  handleAddressChange(event) {
+    this.setState({address: event.target.value});
+  }
+
 
   // on form submit this is the action called
   handleSubmit(event) {
@@ -83,15 +91,14 @@ class BecomeNormalForm extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result);
-        var userAddress = '0x' + keystore._computeAddressFromPrivKey(this.state.privateKey)
         var txOptions = {
-          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(userAddress)),
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(800000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
-          value: 5555
+          value: 0
         }
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', userAddress, txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeNormal', this.state.address, txOptions);
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
         transaction.sign(privateKey);
@@ -120,15 +127,15 @@ class BecomeNormalForm extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter you WhaleCoin address holding 1000 WHL" value={this.state.privateKey} onChange={this.handleChange} />
+            <TextField fullWidth label="Enter you WhaleCoin address holding 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth label="Enter the private key for this address" value={this.state.privateKey} onChange={this.handleChange} />
+              <TextField fullWidth label="Enter the private key for this address" value={this.state.privateKey} onChange={this.handleKeyChange} />
 
               </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Stop Being a Whale!</Button>
+                <Button raised type="submit" color="primary">Stop being a Whale!</Button>
 
                 </Grid>
                 </Grid>
@@ -140,4 +147,4 @@ class BecomeNormalForm extends Component {
   }
 }
 
-export default withStyles(styles)(BecomeNormalForm);
+export default withStyles(styles)(BecomeWhaleForm);
