@@ -15,6 +15,13 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+
+const divStyle = {
+  marginLeft:"50px",
+  marginRight:"50px"
+}
+
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -98,10 +105,10 @@ class App extends Component {
         <div>
           {< Header />}
 
-          <div>
+          <div style={divStyle}>
             {<ActionGrid/>}
           </div>
-          <div>
+          <div style={divStyle}>
           <h1>Whale Info:</h1>
           <br></br>
           </div>
