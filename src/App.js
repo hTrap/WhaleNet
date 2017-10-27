@@ -101,7 +101,10 @@ class App extends Component {
           <div>
             {<ActionGrid/>}
           </div>
-
+          <div>
+          <h1>Whale Info:</h1>
+          <br></br>
+          </div>
         </div>
       </MuiThemeProvider>
     );

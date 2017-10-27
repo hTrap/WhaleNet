@@ -29,18 +29,15 @@ const styles  = {
 };
 
 
-class BecomeWhaleForm extends Component {
+class BecomeNormalForm extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      address: '',
       privateKey: '',
       web3: null
     }
-    this.handleKeyChange = this.handleKeyChange.bind(this);
-    this.handleAddressChange = this.handleAddressChange.bind(this);
-
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -57,14 +54,9 @@ class BecomeWhaleForm extends Component {
   }
 
   // on change of form values these states are updatd
-  handleKeyChange(event) {
+  handleChange(event) {
     this.setState({privateKey: event.target.value});
   }
-
-  handleAddressChange(event) {
-    this.setState({address: event.target.value});
-  }
-
 
   // on form submit this is the action called
   handleSubmit(event) {
@@ -91,14 +83,15 @@ class BecomeWhaleForm extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result);
+        var userAddress = '0x' + keystore._computeAddressFromPrivKey(this.state.privateKey)
         var txOptions = {
-          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(userAddress)),
           gasLimit: this.state.web3.toHex(800000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
           value: 5555
         }
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', this.state.address, txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', userAddress, txOptions);
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
         transaction.sign(privateKey);
@@ -127,15 +120,15 @@ class BecomeWhaleForm extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter you WhaleCoin address holding 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter you WhaleCoin address holding 1000 WHL" value={this.state.privateKey} onChange={this.handleChange} />
 
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth label="Enter the private key for this address" value={this.state.privateKey} onChange={this.handleKeyChange} />
+              <TextField fullWidth label="Enter the private key for this address" value={this.state.privateKey} onChange={this.handleChange} />
 
               </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Become a Whale!</Button>
+                <Button raised type="submit" color="primary">Stop Being a Whale!</Button>
 
                 </Grid>
                 </Grid>
@@ -147,4 +140,4 @@ class BecomeWhaleForm extends Component {
   }
 }
 
-export default withStyles(styles)(BecomeWhaleForm);
+export default withStyles(styles)(BecomeNormalForm);

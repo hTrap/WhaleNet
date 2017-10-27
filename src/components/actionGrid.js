@@ -10,6 +10,7 @@ import Button from 'material-ui/Button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import BecomeWhaleForm from '../components/forms/BecomeWhaleForm.js'
+import WhaleAccount from '../components/WhaleAccount.js'
 import Header from '../components/header.js'
 
 
@@ -51,7 +52,7 @@ class ActionGrid extends Component {
     event.preventDefault();
     ReactDOM.render(
       <MuiThemeProvider>
-      <div>{< BecomeWhaleForm />}</div>
+      <div>{< WhaleAccount />}</div>
     </MuiThemeProvider>, document.getElementById('root'));
   }
   render() {
