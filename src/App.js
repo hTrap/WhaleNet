@@ -9,7 +9,7 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import BecomeWhaleForm from './components/forms/BecomeWhaleForm.js'
 import Header from './components/header.js'
-
+import ActionGrid from './components/actionGrid.js'
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
@@ -99,37 +99,7 @@ class App extends Component {
           {< Header />}
 
           <div>
-            <Grid container spacing={24}>
-
-              <Grid item xs={6} sm={3}>
-                <Paper>
-                  <form onSubmit={this.handleSubmit.bind(this)}>
-                    <Button raised type="submit" color="primary">Go</Button>
-                  </form>
-                </Paper>
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <Paper>
-                  <form onSubmit={this.handleSubmit.bind(this)}>
-                    <Button raised type="submit" color="primary">Go</Button>
-                  </form>
-                </Paper>
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <Paper>
-                  <form onSubmit={this.handleSubmit.bind(this)}>
-                    <Button raised type="submit" color="primary">Go</Button>
-                  </form>
-                </Paper>
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <Paper>
-                  <form onSubmit={this.handleSubmit.bind(this)}>
-                    <Button raised type="submit" color="primary">Go</Button>
-                  </form>
-                </Paper>
-              </Grid>
-            </Grid>
+            {<ActionGrid/>}
           </div>
 
         </div>
