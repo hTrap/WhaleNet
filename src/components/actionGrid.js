@@ -13,6 +13,7 @@ import BecomeWhaleForm from '../components/forms/BecomeWhaleForm.js'
 import WhaleAccount from '../components/WhaleAccount.js'
 import ModeratorAccount from '../components/ModeratorAccount.js'
 import PostAction from '../components/postAction.js'
+import AddFollowers from '../components/followerAction.js'
 
 
 import Header from '../components/header.js'
@@ -74,6 +75,16 @@ class ActionGrid extends Component {
       <div>{< PostAction />}</div>
     </MuiThemeProvider>, document.getElementById('root'));
   }
+
+  handleSubmitFollower(event) {
+    event.preventDefault();
+    ReactDOM.render(
+      <MuiThemeProvider>
+      <div>{< AddFollowers />}</div>
+    </MuiThemeProvider>, document.getElementById('root'));
+  }
+
+
   render() {
 
 
@@ -121,7 +132,7 @@ class ActionGrid extends Component {
               <h1>My Followers</h1>
               <br></br>
               <p>Reward your Followers</p>
-                <form onSubmit={this.handleSubmit.bind(this)}>
+                <form onSubmit={this.handleSubmitFollower.bind(this)}>
                   <Button raised type="submit" color="primary">Go</Button>
                 </form>
               </Paper>
