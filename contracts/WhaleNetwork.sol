@@ -94,9 +94,12 @@ contract WhaleNetwork {
   }
 
   function post() onlyWhale {
+    require(whales[msg.sender].isWhale); //check if whale
+    /*require(bytes(postTitle).length <= 160);*/
     posts[numPosts].id = numPosts;
     posts[numPosts].timestamp = now;
     posts[numPosts].whale = msg.sender;
+    /*posts[numPosts].title = postTitle;*/
     numPosts++;
   }
 

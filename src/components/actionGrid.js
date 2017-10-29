@@ -12,6 +12,8 @@ import ReactDOM from 'react-dom'
 import BecomeWhaleForm from '../components/forms/BecomeWhaleForm.js'
 import WhaleAccount from '../components/WhaleAccount.js'
 import ModeratorAccount from '../components/ModeratorAccount.js'
+import PostAction from '../components/postAction.js'
+
 
 import Header from '../components/header.js'
 
@@ -64,6 +66,14 @@ class ActionGrid extends Component {
       <div>{< ModeratorAccount />}</div>
     </MuiThemeProvider>, document.getElementById('root'));
   }
+
+  handleSubmitPost(event) {
+    event.preventDefault();
+    ReactDOM.render(
+      <MuiThemeProvider>
+      <div>{< PostAction />}</div>
+    </MuiThemeProvider>, document.getElementById('root'));
+  }
   render() {
 
 
@@ -101,7 +111,7 @@ class ActionGrid extends Component {
               <h1>My Posts</h1>
               <br></br>
               <p>Add a Post</p>
-                <form onSubmit={this.handleSubmit.bind(this)}>
+                <form onSubmit={this.handleSubmitPost.bind(this)}>
                   <Button raised type="submit" color="primary">Go</Button>
                 </form>
               </Paper>
