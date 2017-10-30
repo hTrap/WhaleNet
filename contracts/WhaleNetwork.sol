@@ -21,6 +21,7 @@ contract WhaleNetwork {
     uint id;
     address[] followers;
     address whale;
+    string title;
   }
 
   uint numPosts;
@@ -93,21 +94,18 @@ contract WhaleNetwork {
       validators[addr].isValidator = true;
   }
 
-  function post() onlyWhale {
-    require(whales[msg.sender].isWhale); //check if whale
-    /*require(bytes(postTitle).length <= 160);*/
+  function post(string postTitle) onlyWhale {
+    require(bytes(postTitle).length <= 160);
     posts[numPosts].id = numPosts;
     posts[numPosts].timestamp = now;
     posts[numPosts].whale = msg.sender;
-    /*posts[numPosts].title = postTitle;*/
+    posts[numPosts].title = postTitle;
     numPosts++;
   }
 
-  function addFollowers(uint postid, address[] followers) {
+  function addFollowers(uint postid, address follower) {
     require(whales[posts[postid].whale].moderator == msg.sender); //moderator can only add moderating whale's post
-    for (uint i=0; i < followers.length; i++) {
-      posts[postid].followers.push(followers[i]);
-    }
+    posts[postid].followers.push(follower);
   }
 
 

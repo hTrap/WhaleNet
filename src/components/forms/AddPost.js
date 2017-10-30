@@ -94,20 +94,25 @@ class AddPost extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
+        whaleNetwork.at(result).then((whaleNetworkInstance) => {
+            whaleNetworkInstance = whaleNetworkInstance;
+
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
           gasPrice: this.state.web3.toHex(20000000000),
-          to: whaleNetworkInstance.address,
-          value: 0
+          to: result,
+          from: this.state.address
         }
         console.log(txOptions)
 
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'post',[], txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'post',[this.state.post], txOptions);
+        console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
+        console.log(2)
         transaction.sign(privateKey);
+        console.log(3)
         var serializedTx = transaction.serialize().toString('hex');
         console.log(serializedTx)
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
@@ -119,7 +124,7 @@ class AddPost extends Component {
               <div>{result.toString()}</div>, document.getElementById('root'));
           }
         })
-
+      })
       })
     })
   }

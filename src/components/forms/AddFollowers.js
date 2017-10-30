@@ -35,7 +35,7 @@ class AddFollowers extends Component {
 
     this.state = {
       address: '',
-      followers: '',
+      follower: '',
       privateKey: '',
       pid: 0,
       web3: null
@@ -76,7 +76,7 @@ class AddFollowers extends Component {
     this.setState({pid:event.target.value})
   }
   handleFollowerAddChange(event) {
-    this.setState({followers: event.target.value})
+    this.setState({follower: event.target.value})
   }
   // on form submit this is the action called
   handleSubmit(event) {
@@ -91,7 +91,6 @@ class AddFollowers extends Component {
     // Declaring this for later so we can chain functions on SimpleStorage.
     var whaleRewardsInstance
     var whaleNetworkInstance
-
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
       whaleRewards.deployed().then((instance) => {
@@ -102,24 +101,27 @@ class AddFollowers extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
-        var data = whaleNetworkInstance.addFollowers.request(this.state.pid, JSON.parse(this.state.followers))
-        console.log(data["params"]["data"])
+        whaleNetwork.at(result).then((whaleNetworkInstance) => {
+            whaleNetworkInstance = whaleNetworkInstance;
+
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
-          gasLimit: this.state.web3.toHex(800000),
+          gasLimit: this.state.web3.toHex(2000000),
           gasPrice: this.state.web3.toHex(20000000000),
-          to: whaleNetworkInstance.address,
-          value: 0,
-          data: data["params"]["data"]
+          to: result,
+          from: this.state.address
         }
-        var transaction = new tx(txOptions);
-        console.log(this.state.followers,JSON.parse(this.state.followers))
-        // var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollowers', [this.state.pid, JSON.parse(this.state.followers)], txOptions);
+        console.log(txOptions)
+        console.log(this.state.pid, this.state.follower)
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollowers',[this.state.pid, this.state.follower], txOptions);
+        console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
-        // var transaction = new tx(rawTx);
+        var transaction = new tx(rawTx);
+        console.log(2)
         transaction.sign(privateKey);
+        console.log(3)
         var serializedTx = transaction.serialize().toString('hex');
+        console.log(serializedTx)
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
@@ -129,6 +131,8 @@ class AddFollowers extends Component {
               <div>{result.toString()}</div>, document.getElementById('root'));
           }
         })
+
+      })
 
       })
     })
@@ -156,7 +160,7 @@ class AddFollowers extends Component {
 
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Follower Addresses" value={this.state.followers} onChange={this.handleFollowerAddChange} />
+                  <TextField fullWidth label="Follower Addresses" value={this.state.follower} onChange={this.handleFollowerAddChange} />
 
                   </Grid>
               <Grid item xs={12}>
