@@ -30,7 +30,7 @@ contract WhaleNetwork {
   mapping (address => Whale) whales;
   uint numWhales;
   uint whaleRequirement;
-  address[] whaleList;
+  address[] public whaleList;
   mapping (address => Validator) validators;
   uint lastPostRewarded;
 
@@ -104,7 +104,6 @@ contract WhaleNetwork {
   }
 
   function addFollowers(uint postid, address follower) {
-    require(whales[posts[postid].whale].moderator == msg.sender); //moderator can only add moderating whale's post
     posts[postid].followers.push(follower);
   }
 
@@ -127,7 +126,7 @@ contract WhaleNetwork {
     balance = this.balance;
   }
 
-  function getWhales() constant returns (address[] addr, uint[] time, bool[] status, uint num) {
+  /*function getWhale(uint id) constant returns (address[] addr, uint[] time, bool[] status, uint num) {
     addr = new address[](numWhales);
     time = new uint[](numWhales);
     status = new bool[](numWhales);
@@ -137,7 +136,7 @@ contract WhaleNetwork {
       status[i] = whales[whaleList[i]].isWhale;
     }
       return (addr, time, status, numWhales);
-  }
+  }*/
 
   function getPost(uint postId) constant returns (uint id, uint timestamp, address whale, uint numFollowers) {
     require(postId < numPosts); //We check that the post exists

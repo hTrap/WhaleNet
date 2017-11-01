@@ -10,6 +10,7 @@ import Grid from 'material-ui/Grid';
 import BecomeWhaleForm from './components/forms/BecomeWhaleForm.js'
 import Header from './components/header.js'
 import ActionGrid from './components/actionGrid.js'
+import WhaleInfo from './components/WhaleInfo.js'
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
@@ -110,7 +111,8 @@ class App extends Component {
           </div>
           <div style={divStyle}>
           <h1>Whale Info:</h1>
-          <br></br>
+          {<WhaleInfo/>}
+
           </div>
         </div>
       </MuiThemeProvider>
