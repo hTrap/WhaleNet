@@ -9,6 +9,7 @@ contract WhaleNetwork {
     bool isWhale;
     address moderator;
     bool validated;
+    uint[] postList;
   }
 
   struct Validator {
@@ -24,11 +25,11 @@ contract WhaleNetwork {
     string title;
   }
 
-  uint numPosts;
+  uint public numPosts;
   mapping (uint => Post) posts;
   address owner;
   mapping (address => Whale) whales;
-  uint numWhales;
+  uint public numWhales;
   uint whaleRequirement;
   address[] public whaleList;
   mapping (address => Validator) validators;
@@ -100,6 +101,7 @@ contract WhaleNetwork {
     posts[numPosts].timestamp = now;
     posts[numPosts].whale = msg.sender;
     posts[numPosts].title = postTitle;
+    whales[msg.sender].postList.push(numPosts);
     numPosts++;
   }
 
@@ -114,29 +116,13 @@ contract WhaleNetwork {
     return status;
   }
 
-  function getOwnerAddress() constant returns (address _owner) {
-    return owner;
-  }
-
-  function getNumberWhales() constant returns (uint _numWhales) {
-    return numWhales;
-  }
-
   function getLockedBalance() constant returns (uint balance) {
     balance = this.balance;
   }
 
-  /*function getWhale(uint id) constant returns (address[] addr, uint[] time, bool[] status, uint num) {
-    addr = new address[](numWhales);
-    time = new uint[](numWhales);
-    status = new bool[](numWhales);
-    for(uint i=0; i<numWhales;i++) {
-      addr[i] = whaleList[i];
-      time[i] = whales[whaleList[i]].timestamp;
-      status[i] = whales[whaleList[i]].isWhale;
-    }
-      return (addr, time, status, numWhales);
-  }*/
+  function getWhale(address _addr) public constant returns (uint num) {
+      return (whales[_addr].postList.length);
+  }
 
   function getPost(uint postId) constant returns (uint id, uint timestamp, address whale, uint numFollowers) {
     require(postId < numPosts); //We check that the post exists
@@ -146,9 +132,6 @@ contract WhaleNetwork {
     numFollowers = posts[postId].followers.length;
   }
 
-  function getNumberPosts() constant returns (uint _numberPosts) {
-    return numPosts;
-  }
 
   function getModerator(address addr) constant returns (address moderator) {
     moderator = whales[addr].moderator;

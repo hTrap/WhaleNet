@@ -77,7 +77,7 @@ class App extends Component {
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result);
 
-        return whaleNetworkInstance.getNumberWhales.call({from: accounts[0]})
+        return whaleNetworkInstance.numWhales()
       }).then((result) => {
         // Update state with the result.
         return this.setState({storageValue: result.c[0]})

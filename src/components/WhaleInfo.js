@@ -43,7 +43,8 @@ class WhaleInfo extends Component {
     this.state = {
       address1: '',
       address: '',
-      post: '',
+      post: 0,
+      post1: 0,
       web3: null
     }
 
@@ -75,8 +76,7 @@ class WhaleInfo extends Component {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
-        return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
-      }).then((result) => {
+        return whaleRewardsInstance.getNetworkAddress()}).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((netInstance) => {
@@ -84,17 +84,33 @@ class WhaleInfo extends Component {
           whaleNetworkInstance.whaleList(0).then((address) => {
             console.log(address)
             this.setState({address:address})
-          }).then(()=> {
-            whaleNetworkInstance.whaleList(1).then((address1) => {
-              console.log(address1)
-              this.setState({address1:address1})
-            })
-          })
+
+            return address;
+          }).then((address)=> {
+              whaleNetworkInstance.getWhale(address).then((numPosts) => {
+                console.log(numPosts.toNumber())
+                this.setState({post:numPosts.toNumber()})
+                // return address1
+              }).then(()=> {
+                whaleNetworkInstance.whaleList(1).then((address1) => {
+                  console.log(address1)
+                  this.setState({address1:address1})
+                  return address1
+                }).then((address1) => {
+                    whaleNetworkInstance.getWhale(address1).then((numPosts) => {
+                      this.setState({post1:numPosts.toNumber()})
+
+                    })
+                })
+
         })
       })
     })
   })
-  }
+})
+})
+}
+
   // renders the basic form in the root tab space
   render() {
     return (
@@ -120,7 +136,7 @@ class WhaleInfo extends Component {
                       <TableRow>
                         <TableCell>1</TableCell>
                         <TableCell>{this.state.address1}</TableCell>
-                        <TableCell numeric>{this.state.post}</TableCell>
+                        <TableCell numeric>{this.state.post1}</TableCell>
                       </TableRow>
                 </TableBody>
               </Table>

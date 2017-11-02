@@ -27,7 +27,7 @@ contract WhaleRewards{
     }
 
     function distReward() isOwner() {
-      uint numberPosts = whaleNetwork.getNumberPosts();
+      uint numberPosts = whaleNetwork.numPosts();
       uint lastPostRewarded = whaleNetwork.getLastPostRewarded();
       uint balance = this.balance;
       uint followerRewards = 9 * balance/10;
