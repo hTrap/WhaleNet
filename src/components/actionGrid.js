@@ -101,7 +101,7 @@ class ActionGrid extends Component {
               <Paper className={this.props.classes.paper}>
               <h1>My Whale Account</h1>
               <br></br>
-              <p>Becoma a Whale/Stop Being a Whale</p>
+              <p>Become a Whale/Stop Being a Whale</p>
                 <form onSubmit={this.handleSubmit.bind(this)}>
                   <Button raised type="submit" color="primary">Go</Button>
                 </form>

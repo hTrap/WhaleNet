@@ -131,11 +131,11 @@ class RemoveModerator extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter you WhaleCoin address holding 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth label="Enter the private key for this address" value={this.state.privateKey} onChange={this.handleKeyChange} />
+              <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
 
               </Grid>
               <Grid item xs={12}>
