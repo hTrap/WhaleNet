@@ -26,9 +26,9 @@ contract WhaleNetwork {
   }
 
   uint public numPosts;
-  mapping (uint => Post) posts;
+  mapping (uint => Post) public posts;
   address owner;
-  mapping (address => Whale) whales;
+  mapping (address => Whale) public whales;
   uint public numWhales;
   uint whaleRequirement;
   address[] public whaleList;

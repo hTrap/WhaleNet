@@ -97,12 +97,12 @@ class AddFollowers extends Component {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
-        return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
+        return whaleRewardsInstance.getNetworkAddress()
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetwork.at(result).then((whaleNetworkInstance) => {
-            whaleNetworkInstance = whaleNetworkInstance;
+        whaleNetwork.at(result).then((netInstance) => {
+            whaleNetworkInstance = netInstance;
 
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
