@@ -10,7 +10,6 @@ import Button from 'material-ui/Button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import AddModerator from '../components/forms/AddModerator.js'
-import RemoveModerator from '../components/forms/RemoveModerator.js'
 import Header from '../components/header.js'
 import TextField from 'material-ui/TextField';
 

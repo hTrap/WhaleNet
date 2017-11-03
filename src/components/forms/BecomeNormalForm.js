@@ -12,7 +12,7 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-
+import Alert from '../alert.js';
 
 
 
@@ -109,7 +109,7 @@ class BecomeWhaleForm extends Component {
           } else {
             console.log(result);
             ReactDOM.render(
-              <div>{result.toString()}</div>, document.getElementById('root'));
+              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
           }
         })
 

@@ -6,6 +6,7 @@ import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
+import Alert from '../alert.js'
 
 class WhaleCheckForm extends Component {
   constructor(props) {
@@ -65,7 +66,7 @@ class WhaleCheckForm extends Component {
       }).then((result) => {
 
         ReactDOM.render(
-          <div>{result.toString()}</div>, document.getElementById('root'));
+          <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
       })
     })
   }
