@@ -3,6 +3,11 @@ pragma solidity ^0.4.11;
 
 contract WhaleNetwork {
 
+  event Posted(
+      address author,
+      string title,
+      uint id
+  );
 
   struct Whale {
     uint timestamp;
@@ -102,6 +107,7 @@ contract WhaleNetwork {
     posts[numPosts].whale = msg.sender;
     posts[numPosts].title = postTitle;
     whales[msg.sender].postList.push(numPosts);
+    Posted(msg.sender, postTitle, numPosts);
     numPosts++;
   }
 

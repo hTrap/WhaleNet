@@ -12,7 +12,7 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import Alert from '../alert.js';
+import PostAlert from '../alerts/postAlert.js';
 
 
 
@@ -94,8 +94,8 @@ class AddPost extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetwork.at(result).then((whaleNetworkInstance) => {
-            whaleNetworkInstance = whaleNetworkInstance;
+        whaleNetwork.at(result).then((whaleNet) => {
+            whaleNetworkInstance = whaleNet;
 
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
@@ -120,8 +120,12 @@ class AddPost extends Component {
             console.log(err);
           } else {
             console.log(result);
-            ReactDOM.render(
-              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
+            whaleNetworkInstance.Posted(function(error, data) {
+              if (!error)
+              console.log(data)
+              ReactDOM.render(
+              <div>{<PostAlert result={result.toString()} id={data.args.id.toNumber()} author={data.args.author} title={data.args.title}/>}</div>, document.getElementById('result'));
+            })
           }
         })
       })
