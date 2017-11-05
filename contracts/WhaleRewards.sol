@@ -8,6 +8,11 @@ contract WhaleRewards{
   mapping (address => uint) balances;
   address networkAddress;
 
+  event Claimed(
+    address follower,
+    uint reward
+    );
+
   WhaleNetwork whaleNetwork;
   /*uint distEpoch;
   uint distBloc;*/
@@ -51,7 +56,9 @@ contract WhaleRewards{
 
     function claimReward(address addr) {
       addr.transfer(balances[addr]);
+      Claimed(addr, balances[addr]);
       balances[addr] = 0;
+
     }
 
     function checkRewards(address addr) constant returns (uint balance) {

@@ -14,7 +14,7 @@ import WhaleAccount from '../components/WhaleAccount.js'
 import ModeratorAccount from '../components/ModeratorAccount.js'
 import PostAction from '../components/postAction.js'
 import AddFollowers from '../components/followerAction.js'
-
+import FollowerAccount from '../components/followerAccount.js'
 
 import Header from '../components/header.js'
 
@@ -83,7 +83,13 @@ class ActionGrid extends Component {
       <div>{< AddFollowers />}</div>
     </MuiThemeProvider>, document.getElementById('root'));
   }
-
+  handleSubmitReward(event) {
+    event.preventDefault();
+    ReactDOM.render(
+      <MuiThemeProvider>
+      <div>{< FollowerAccount />}</div>
+    </MuiThemeProvider>, document.getElementById('root'));
+  }
 
   render() {
 
@@ -109,7 +115,7 @@ class ActionGrid extends Component {
             </Grid>
             <Grid item xs={6} sm={3}>
               <Paper className={this.props.classes.paper}>
-              <h1>My Moderator Account</h1>
+              <h1>My Moderator</h1>
               <br></br>
               <p>Add or Remove a Moderator</p>
                 <form onSubmit={this.handleSubmitMod.bind(this)}>
@@ -136,6 +142,13 @@ class ActionGrid extends Component {
                   <Button raised type="submit" color="primary">Go</Button>
                 </form>
               </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={this.props.classes.paper}>
+            <form onSubmit={this.handleSubmitReward.bind(this)}>
+              <Button raised type="submit" color="primary">View/Claim Follower Rewards</Button>
+            </form>
+            </Paper>
             </Grid>
           </Grid>
 
