@@ -9,6 +9,11 @@ contract WhaleNetwork {
       uint id
   );
 
+  event ModeratorAdded(
+    address whale,
+    address moderator
+    );
+
   struct Whale {
     uint timestamp;
     bool isWhale;
@@ -39,6 +44,7 @@ contract WhaleNetwork {
   address[] public whaleList;
   mapping (address => Validator) validators;
   uint lastPostRewarded;
+  mapping (address => address) public whaleMod;
 
   //modifiers
 
@@ -87,6 +93,8 @@ contract WhaleNetwork {
 
   function designateModerator(address mod) onlyWhale{
       whales[msg.sender].moderator = mod;
+      whaleMod[msg.sender] = mod;
+      ModeratorAdded(msg.sender, mod);
   }
 
   function validate(address whale) onlyValidators {
@@ -100,11 +108,13 @@ contract WhaleNetwork {
       validators[addr].isValidator = true;
   }
 
-  function post(string postTitle) onlyWhale {
+  function post(string postTitle, address whale)  {
+    require(whales[whale].isWhale);
+    require(whaleMod[whale] == msg.sender);
     require(bytes(postTitle).length <= 160);
     posts[numPosts].id = numPosts;
     posts[numPosts].timestamp = now;
-    posts[numPosts].whale = msg.sender;
+    posts[numPosts].whale = whale;
     posts[numPosts].title = postTitle;
     whales[msg.sender].postList.push(numPosts);
     Posted(msg.sender, postTitle, numPosts);
@@ -126,8 +136,8 @@ contract WhaleNetwork {
     balance = this.balance;
   }
 
-  function getWhale(address _addr) public constant returns (uint num) {
-      return (whales[_addr].postList.length);
+  function getWhale(address _addr) public constant returns (uint num, address moderator) {
+      return (whales[_addr].postList.length, whaleMod[_addr]);
   }
 
   function getPost(uint postId) constant returns (uint id, uint timestamp, address whale, uint numFollowers) {
@@ -139,7 +149,7 @@ contract WhaleNetwork {
   }
 
 
-  function getModerator(address addr) constant returns (address moderator) {
+  function getModerator(address addr) public constant returns (address moderator) {
     moderator = whales[addr].moderator;
     return moderator;
   }

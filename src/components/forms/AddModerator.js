@@ -102,7 +102,7 @@ class AddModerator extends Component {
           to: whaleNetworkInstance.address,
           value: 0
         }
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'designateModerator', this.state.modAddress, txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'designateModerator', [this.state.modAddress], txOptions);
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
         transaction.sign(privateKey);
@@ -112,9 +112,15 @@ class AddModerator extends Component {
             console.log(err);
           } else {
             console.log(result);
+            whaleNetworkInstance.ModeratorAdded(function(error, data) {
+              if (error) {
+                console.log(error);
+              } else {
+              console.log(data)
             ReactDOM.render(
               <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
-          }
+          }});
+        }
         })
 
       })

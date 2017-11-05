@@ -88,8 +88,8 @@ class WhaleInfo extends Component {
             return address;
           }).then((address)=> {
               whaleNetworkInstance.getWhale(address).then((numPosts) => {
-                console.log(numPosts.toNumber())
-                this.setState({post:numPosts.toNumber()})
+                console.log(numPosts)
+                this.setState({post:numPosts[0].toNumber()})
                 // return address1
               }).then(()=> {
                 whaleNetworkInstance.whaleList(1).then((address1) => {
@@ -98,7 +98,7 @@ class WhaleInfo extends Component {
                   return address1
                 }).then((address1) => {
                     whaleNetworkInstance.getWhale(address1).then((numPosts) => {
-                      this.setState({post1:numPosts.toNumber()})
+                      this.setState({post1:numPosts[0].toNumber()})
 
                     })
                 })

@@ -34,6 +34,7 @@ class AddPost extends Component {
     super(props)
 
     this.state = {
+      whale: '',
       address: '',
       post: '',
       privateKey: '',
@@ -44,6 +45,7 @@ class AddPost extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePostChange = this.handlePostChange.bind(this);
+    this.handleWhaleChange = this.handleWhaleChange.bind(this);
   }
 
   componentWillMount() {
@@ -68,7 +70,11 @@ class AddPost extends Component {
   }
 
   handlePostChange(event) {
-    this.setState({post: event.target.value})
+    this.setState({post: event.target.value});
+  }
+
+  handleWhaleChange(event) {
+    this.setState({whale: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
@@ -104,9 +110,9 @@ class AddPost extends Component {
           to: result,
           from: this.state.address
         }
-        console.log(txOptions)
+        console.log(this.state.post, this.state.whale)
 
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'post',[this.state.post], txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'post',[this.state.post, this.state.whale], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
@@ -121,10 +127,12 @@ class AddPost extends Component {
           } else {
             console.log(result);
             whaleNetworkInstance.Posted(function(error, data) {
-              if (!error)
+              if (error) {
+                console.log(error);
+              } else {
               console.log(data)
               ReactDOM.render(
-              <div>{<PostAlert result={result.toString()} id={data.args.id.toNumber()} author={data.args.author} title={data.args.title}/>}</div>, document.getElementById('result'));
+              <div>{<PostAlert result={result.toString()} id={data.args.id.toNumber()} author={data.args.author} title={data.args.title}/>}</div>, document.getElementById('result'));}
             })
           }
         })
@@ -143,13 +151,17 @@ class AddPost extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter Moderator Address" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
 
               </Grid>
+              <Grid item xs={12} >
+                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
+
+                </Grid>
               <Grid item xs={12}>
                 <TextField fullWidth label="Title your Post" value={this.state.post} onChange={this.handlePostChange} />
 
