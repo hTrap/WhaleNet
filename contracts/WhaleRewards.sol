@@ -65,8 +65,8 @@ contract WhaleRewards{
           vars.postFollower = whaleNetwork.getFollower(vars.i, vars.j);
           balances[vars.postFollower] += (vars.followerRewards/vars.postsDiff)/vars.followers;
         }
+        lastPostRewarded = vars.i;
       }
-      lastPostRewarded = vars.numberPosts-1;
     }
 
     function claimReward(address addr) {
