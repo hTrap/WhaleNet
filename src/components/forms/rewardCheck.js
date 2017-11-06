@@ -84,9 +84,9 @@ class RewardCheck extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-
+              var resWhl = result.toNumber()/1000000000000000000;
               ReactDOM.render(
-              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
+              <div>{<Alert result={resWhl}/>}</div>, document.getElementById('result'));
             })
           })
         }
