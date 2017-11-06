@@ -22,7 +22,6 @@ contract WhaleNetwork {
   struct Whale {
     uint timestamp;
     bool isWhale;
-    address moderator;
     bool validated;
     uint[] postList;
   }
@@ -48,7 +47,6 @@ contract WhaleNetwork {
   uint whaleRequirement;
   address[] public whaleList;
   mapping (address => Validator) validators;
-  uint lastPostRewarded;
   mapping (address => address) public whaleMod;
 
   //modifiers
@@ -73,7 +71,6 @@ contract WhaleNetwork {
     numWhales = 0;
     whaleRequirement = 5555;
     numPosts = 0;
-    lastPostRewarded = 0;
   }
 
 
@@ -97,7 +94,6 @@ contract WhaleNetwork {
   }
 
   function designateModerator(address mod) onlyWhale{
-      whales[msg.sender].moderator = mod;
       whaleMod[msg.sender] = mod;
       ModeratorAdded(msg.sender, mod);
   }
@@ -155,15 +151,8 @@ contract WhaleNetwork {
     numFollowers = posts[postId].followers.length;
   }
 
-
-  function getModerator(address addr) public constant returns (address moderator) {
-    moderator = whales[addr].moderator;
-    return moderator;
-  }
-  function getLastPostRewarded() constant returns (uint num) {
-    return lastPostRewarded;
-  }
   function getFollower(uint pid, uint fid) constant returns (address) {
     return posts[pid].followers[fid];
   }
+
 }

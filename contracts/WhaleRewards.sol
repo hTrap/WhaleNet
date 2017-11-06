@@ -5,8 +5,24 @@ import "./WhaleNetwork.sol";
 contract WhaleRewards{
 
   address public owner;
-  mapping (address => uint) balances;
+  mapping (address => uint) public balances;
   address networkAddress;
+  uint public lastPostRewarded;
+
+  struct Vars {
+    uint numberPosts;
+    uint followerRewards;
+    uint moderatorRewards;
+    uint postsDiff;
+    uint id;
+    uint num;
+    uint followers;
+    address whale;
+    address moderator;
+    address postFollower;
+    uint i;
+    uint j;
+  }
 
   event Claimed(
     address follower,
@@ -20,6 +36,7 @@ contract WhaleRewards{
       owner = msg.sender;
       whaleNetwork = new WhaleNetwork(owner);
       networkAddress = address(whaleNetwork);
+      lastPostRewarded = 0;
     }
   modifier isOwner() {
       require(owner==msg.sender);
@@ -31,27 +48,25 @@ contract WhaleRewards{
 
     }
 
-    function distReward() isOwner() {
-      uint numberPosts = whaleNetwork.numPosts();
-      uint lastPostRewarded = whaleNetwork.getLastPostRewarded();
-      uint balance = this.balance;
-      uint followerRewards = 9 * balance/10;
-      uint moderatorRewards = balance/10;
-      uint postsDiff = numberPosts - lastPostRewarded;
-      for (uint i=lastPostRewarded; i<numberPosts; i++) {
-        uint id;
-        uint num;
-        address whale;
-        uint followers;
-        (id, num, whale, followers) = whaleNetwork.getPost(i);
-        address moderator = whaleNetwork.getModerator(whale);
-        balances[moderator] += (moderatorRewards/postsDiff);
-        for (uint j=0; j<followers;j++) {
-          address postFollower = whaleNetwork.getFollower(i, j);
-          balances[postFollower] += (followerRewards/postsDiff)/followers;
+    function distReward() {
+      Vars memory vars;
+      vars.numberPosts = whaleNetwork.numPosts();
+      vars.followerRewards = 9 * this.balance/10;
+      vars.moderatorRewards = this.balance/10;
+      vars.postsDiff = vars.numberPosts - lastPostRewarded;
+
+
+      for (vars.i=lastPostRewarded; vars.i<vars.numberPosts; vars.i++) {
+
+        (vars.id, vars.num, vars.whale, vars.followers) = whaleNetwork.getPost(vars.i);
+        vars.moderator = whaleNetwork.whaleMod(vars.whale);
+        balances[vars.moderator] += (vars.moderatorRewards/vars.postsDiff);
+        for (vars.j=0; vars.j<vars.followers;vars.j++) {
+          vars.postFollower = whaleNetwork.getFollower(vars.i, vars.j);
+          balances[vars.postFollower] += (vars.followerRewards/vars.postsDiff)/vars.followers;
         }
       }
-      lastPostRewarded = i;
+      lastPostRewarded = vars.numberPosts-1;
     }
 
     function claimReward(address addr) {
@@ -61,10 +76,6 @@ contract WhaleRewards{
 
     }
 
-    function checkRewards(address addr) constant returns (uint balance) {
-      balance = balances[addr];
-      return balance;
-    }
 
     function getNetworkAddress() constant returns (address addr){
       return networkAddress;

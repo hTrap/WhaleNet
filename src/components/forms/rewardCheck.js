@@ -80,7 +80,7 @@ class RewardCheck extends Component {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
-        return whaleRewardsInstance.checkRewards(this.state.address);
+        return whaleRewardsInstance.balances(this.state.address);
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
