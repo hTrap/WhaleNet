@@ -112,8 +112,9 @@ class AddFollowers extends Component {
           from: this.state.address
         }
         console.log(txOptions)
-        console.log(this.state.pid, this.state.follower)
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollowers',[this.state.pid, this.state.follower], txOptions);
+        var followersList = this.state.follower.split(" ");
+        console.log(this.state.pid, this.state.follower, followersList)
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollowers',[this.state.pid, followersList], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);

@@ -29,6 +29,10 @@ contract WhaleNetwork {
     string title;
   }
 
+  struct Vars {
+    uint i;
+  }
+
   uint public numPosts;
   mapping (uint => Post) public posts;
   address owner;
@@ -111,9 +115,12 @@ contract WhaleNetwork {
     numPosts++;
   }
 
-  function addFollowers(uint postid, address follower) {
+  function addFollowers(uint postid, address[] followers) {
+    Vars memory vars;
     require(whaleMod[posts[postid].whale] == msg.sender);
-    posts[postid].followers.push(follower);
+    for (vars.i=0; vars.i<followers.length; vars.i++) {
+      posts[postid].followers.push(followers[vars.i]);
+  }
   }
 
 
