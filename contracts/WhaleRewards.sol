@@ -8,6 +8,8 @@ contract WhaleRewards{
   mapping (address => uint) public balances;
   address networkAddress;
   uint public lastPostRewarded;
+  uint public allocatedRewards;
+  uint public claimedRewards;
 
   struct Vars {
     uint numberPosts;
@@ -22,6 +24,7 @@ contract WhaleRewards{
     address postFollower;
     uint i;
     uint j;
+    uint currentFollowerRewards;
   }
 
   event Claimed(
@@ -37,6 +40,8 @@ contract WhaleRewards{
       whaleNetwork = new WhaleNetwork(owner);
       networkAddress = address(whaleNetwork);
       lastPostRewarded = 0;
+      allocatedRewards = 0;
+      claimedRewards = 0;
     }
   modifier isOwner() {
       require(owner==msg.sender);
@@ -51,19 +56,21 @@ contract WhaleRewards{
     function distReward() {
       Vars memory vars;
       vars.numberPosts = whaleNetwork.numPosts();
-      vars.followerRewards = 9 * this.balance/10;
-      vars.moderatorRewards = this.balance/10;
       vars.postsDiff = vars.numberPosts - lastPostRewarded;
+      vars.moderatorRewards = ((this.balance-allocatedRewards+claimedRewards)/10)/vars.postsDiff;
+      vars.followerRewards = (9 * (this.balance-allocatedRewards+claimedRewards)/10)/vars.postsDiff;
+      allocatedRewards += vars.moderatorRewards + vars.followerRewards;
 
 
       for (vars.i=lastPostRewarded; vars.i<vars.numberPosts; vars.i++) {
 
         (vars.id, vars.num, vars.whale, vars.followers) = whaleNetwork.getPost(vars.i);
+        vars.currentFollowerRewards = vars.followerRewards/vars.followers;
         vars.moderator = whaleNetwork.whaleMod(vars.whale);
-        balances[vars.moderator] += (vars.moderatorRewards/vars.postsDiff);
+        balances[vars.moderator] += vars.moderatorRewards;
         for (vars.j=0; vars.j<vars.followers;vars.j++) {
           vars.postFollower = whaleNetwork.getFollower(vars.i, vars.j);
-          balances[vars.postFollower] += (vars.followerRewards/vars.postsDiff)/vars.followers;
+          balances[vars.postFollower] += vars.currentFollowerRewards;
         }
         lastPostRewarded = vars.i;
       }
@@ -72,6 +79,7 @@ contract WhaleRewards{
     function claimReward(address addr) {
       addr.transfer(balances[addr]);
       Claimed(addr, balances[addr]);
+      claimedRewards += balances[addr];
       balances[addr] = 0;
 
     }
