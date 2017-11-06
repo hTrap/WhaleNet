@@ -147,7 +147,7 @@ class RewardClaim extends Component {
 
               </Grid>
               <Grid item xs={12} >
-                <TextField fullWidth label="Enter Follower Address" value={this.state.follower} onChange={this.handleFollowerChange} />
+                <TextField fullWidth label="Enter Whale Address" value={this.state.follower} onChange={this.handleFollowerChange} />
 
                 </Grid>
 

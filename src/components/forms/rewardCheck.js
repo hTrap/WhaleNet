@@ -102,7 +102,7 @@ class RewardCheck extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter Follower Address" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter Whale Address" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
 
