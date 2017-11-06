@@ -11,6 +11,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import RewardCheck from '../components/forms/rewardCheck.js'
 import RewardClaim from '../components/forms/rewardClaim.js'
+import RewardDist from '../components/forms/rewardDist.js'
 import Header from '../components/header.js'
 import TextField from 'material-ui/TextField';
 
@@ -72,7 +73,12 @@ class FollowerAccount extends Component {
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
+          <Grid item xs={12} sm={6}>
+            <Paper className={this.props.classes.paper}>
 
+            {<RewardDist/>}
+            </Paper>
+          </Grid>
             <Grid item xs={12} sm={6}>
               <Paper className={this.props.classes.paper}>
 
