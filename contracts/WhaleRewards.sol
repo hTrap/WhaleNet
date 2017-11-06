@@ -7,24 +7,14 @@ contract WhaleRewards{
   address public owner;
   mapping (address => uint) public balances;
   address networkAddress;
-  uint public lastPostRewarded;
   uint public allocatedRewards;
   uint public claimedRewards;
 
   struct Vars {
-    uint numberPosts;
-    uint followerRewards;
-    uint moderatorRewards;
-    uint postsDiff;
-    uint id;
-    uint num;
-    uint followers;
-    address whale;
-    address moderator;
-    address postFollower;
     uint i;
-    uint j;
-    uint currentFollowerRewards;
+    uint rewards;
+    uint rewardPerWhale;
+    uint numWhale;
   }
 
   event Claimed(
@@ -39,7 +29,6 @@ contract WhaleRewards{
       owner = msg.sender;
       whaleNetwork = new WhaleNetwork(owner);
       networkAddress = address(whaleNetwork);
-      lastPostRewarded = 0;
       allocatedRewards = 0;
       claimedRewards = 0;
     }
@@ -55,25 +44,13 @@ contract WhaleRewards{
 
     function distReward() {
       Vars memory vars;
-      vars.numberPosts = whaleNetwork.numPosts();
-      vars.postsDiff = vars.numberPosts - lastPostRewarded;
-      vars.moderatorRewards = ((this.balance-allocatedRewards+claimedRewards)/10)/vars.postsDiff;
-      vars.followerRewards = (9 * (this.balance-allocatedRewards+claimedRewards)/10)/vars.postsDiff;
-      allocatedRewards += vars.moderatorRewards + vars.followerRewards;
-
-
-      for (vars.i=lastPostRewarded; vars.i<vars.numberPosts; vars.i++) {
-
-        (vars.id, vars.num, vars.whale, vars.followers) = whaleNetwork.getPost(vars.i);
-        vars.currentFollowerRewards = vars.followerRewards/vars.followers;
-        vars.moderator = whaleNetwork.whaleMod(vars.whale);
-        balances[vars.moderator] += vars.moderatorRewards;
-        for (vars.j=0; vars.j<vars.followers;vars.j++) {
-          vars.postFollower = whaleNetwork.getFollower(vars.i, vars.j);
-          balances[vars.postFollower] += vars.currentFollowerRewards;
-        }
-        lastPostRewarded = vars.i;
+      vars.numWhale = whaleNetwork.getCurrentWhaleCount();
+      vars.rewards = this.balance - allocatedRewards + claimedRewards;
+      vars.rewardPerWhale = vars.rewards/vars.numWhale;
+      for (vars.i=0; vars.i<vars.numWhale; vars.i++) {
+        balances[whaleNetwork.whaleList(vars.i)] += vars.rewards;
       }
+      allocatedRewards += vars.rewards;
     }
 
     function claimReward(address addr) {

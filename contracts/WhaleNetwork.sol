@@ -10,6 +10,7 @@ contract WhaleNetwork {
   );
 
   struct Whale {
+    uint id;
     uint timestamp;
     bool isWhale;
     bool validated;
@@ -84,6 +85,8 @@ contract WhaleNetwork {
     msg.sender.transfer(whaleRequirement);
     whales[msg.sender].timestamp = now;
     whales[msg.sender].isWhale = false;
+    whaleList[whales[msg.sender].id] = whaleList[whaleList.length-1];
+    delete whaleList[whaleList.length-1];
     numWhales--;
   }
 
@@ -149,5 +152,9 @@ contract WhaleNetwork {
   function getFollower(uint pid, uint fid) constant returns (address) {
     return posts[pid].followers[fid];
   }
+
+  function getCurrentWhaleCount() public constant returns(uint count) {
+    return whaleList.length;
+}
 
 }
