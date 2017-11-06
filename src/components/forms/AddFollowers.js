@@ -127,15 +127,9 @@ class AddFollowers extends Component {
             console.log(err);
           } else {
             console.log(result);
-            whaleNetworkInstance.FollowerAdded(function(error, data) {
-              if (error) {
-                console.log(error);
-              } else {
-              console.log(data)
+
             ReactDOM.render(
               <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
-          }
-        })
       }
         })
 

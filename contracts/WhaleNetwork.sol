@@ -9,12 +9,6 @@ contract WhaleNetwork {
       uint id
   );
 
-
-  event FollowerAdded(
-    uint postid,
-    address follower
-    );
-
   struct Whale {
     uint timestamp;
     bool isWhale;
@@ -120,7 +114,6 @@ contract WhaleNetwork {
   function addFollowers(uint postid, address follower) {
     require(whaleMod[posts[postid].whale] == msg.sender);
     posts[postid].followers.push(follower);
-    FollowerAdded(postid, follower);
   }
 
 
