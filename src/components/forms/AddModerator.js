@@ -98,7 +98,7 @@ class AddModerator extends Component {
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
-          gasPrice: this.state.web3.toHex(20000000000),          
+          gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
           value: 0
         }
@@ -112,14 +112,9 @@ class AddModerator extends Component {
             console.log(err);
           } else {
             console.log(result);
-            whaleNetworkInstance.ModeratorAdded(function(error, data) {
-              if (error) {
-                console.log(error);
-              } else {
-              console.log(data)
             ReactDOM.render(
               <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
-          }});
+
         }
         })
 

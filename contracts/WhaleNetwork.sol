@@ -9,10 +9,6 @@ contract WhaleNetwork {
       uint id
   );
 
-  event ModeratorAdded(
-    address whale,
-    address moderator
-    );
 
   event FollowerAdded(
     uint postid,
@@ -95,7 +91,6 @@ contract WhaleNetwork {
 
   function designateModerator(address mod) onlyWhale{
       whaleMod[msg.sender] = mod;
-      ModeratorAdded(msg.sender, mod);
   }
 
   function validate(address whale) onlyValidators {
