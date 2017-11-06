@@ -146,7 +146,7 @@ class ActionGrid extends Component {
             <Grid item xs={12}>
               <Paper className={this.props.classes.paper}>
             <form onSubmit={this.handleSubmitReward.bind(this)}>
-              <Button raised type="submit" color="primary">View/Claim Follower Rewards</Button>
+              <Button raised type="submit" color="primary">Rewards</Button>
             </form>
             </Paper>
             </Grid>
