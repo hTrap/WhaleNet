@@ -29,7 +29,7 @@ const styles  = {
 };
 
 
-class RewardClaim extends Component {
+class RewardDist extends Component {
   constructor(props) {
     super(props)
 
@@ -65,7 +65,8 @@ class RewardClaim extends Component {
             var allocatedRewards = result.toNumber();
             instance.claimedRewards().then((res) => {
               var claimedRewards = res.toNumber()
-              this.setState({rewards: bal-allocatedRewards+claimedRewards})
+              var accumulatedReward = (bal-allocatedRewards+claimedRewards)/1000000000000000000
+              this.setState({rewards: accumulatedReward})
 
             })
           });      // Instantiate contract once web3 provided.
@@ -171,4 +172,4 @@ class RewardClaim extends Component {
   }
 }
 
-export default withStyles(styles)(RewardClaim);
+export default withStyles(styles)(RewardDist);
