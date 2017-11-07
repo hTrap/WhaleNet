@@ -69,25 +69,26 @@ class FollowerAccount extends Component {
           <div>
           {< Header />}
 
-          <h1 className={this.props.classes.paper}>My Follower Account</h1>
+          <h1 className={this.props.classes.paper}>My Whale Account</h1>
+          <center><h2><b>Reward Checking and Claiming Temporarilly Disabled as We Upgrade The Network -- Block 201,390</b></h2 ></center>
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
           <Grid item xs={12} sm={6}>
             <Paper className={this.props.classes.paper}>
 
-            {<RewardDist/>}
+            {}
             </Paper>
           </Grid>
             <Grid item xs={12} sm={6}>
               <Paper className={this.props.classes.paper}>
 
-              {<RewardCheck/>}
+              {}
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Paper className={this.props.classes.paper}>
-              {<RewardClaim/>}
+              {}
               </Paper>
             </Grid>
           </Grid>

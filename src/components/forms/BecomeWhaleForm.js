@@ -121,22 +121,17 @@ class BecomeWhaleForm extends Component {
     return (
       <MuiThemeProvider>
         <div>
-
-          <form onSubmit={this.handleSubmit}>
-          <div className={this.props.classes.root}>
-
+         <form onSubmit={this.handleSubmit}>
+        <div className={this.props.classes.root}>
           <Grid container spacing={24}>
           <Grid item xs={12} >
             <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
-
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
-
               </Grid>
               <Grid item xs={12}>
                 <Button raised type="submit" color="primary">Become a Whale!</Button>
-
                 </Grid>
                 </Grid>
                 </div>
