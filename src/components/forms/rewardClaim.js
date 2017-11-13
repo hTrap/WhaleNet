@@ -94,7 +94,7 @@ class RewardClaim extends Component {
 
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
-          gasLimit: this.state.web3.toHex(2000000),
+          gasLimit: this.state.web3.toHex(4500000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleRewardsInstance.address,
           from: this.state.address
@@ -120,7 +120,7 @@ class RewardClaim extends Component {
               } else {
               console.log(data)
               ReactDOM.render(
-              <div>{<RewardAlert result={result.toString()} follower={data.args.follower} reward={data.args.reward.toNumber()} />}</div>, document.getElementById('result'));}
+              <div>{<RewardAlert result={result.toString()} follower={data.args.follower} reward={(data.args.reward.toNumber()/1000000000000000000).toFixed(18)} />}</div>, document.getElementById('result'));}
             })
           }
         })

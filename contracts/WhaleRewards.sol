@@ -5,21 +5,20 @@ import "./WhaleNetwork.sol";
 contract WhaleRewards{
 
   address public owner;
-  mapping (address => uint) public balances;
+  mapping (address => uint) public claimedShare;
   address networkAddress;
-  uint public allocatedRewards;
-  uint public claimedRewards;
 
   struct Vars {
-    uint i;
-    uint rewards;
-    uint rewardPerWhale;
-    uint numWhale;
+    uint netShare;
+    uint whaleShare;
+    uint unclaimedShare;
+    uint reward;
+
   }
 
   event Claimed(
-    address follower,
-    uint reward
+    uint reward,
+    address follower
     );
 
   WhaleNetwork whaleNetwork;
@@ -29,9 +28,8 @@ contract WhaleRewards{
       owner = msg.sender;
       whaleNetwork = new WhaleNetwork(owner);
       networkAddress = address(whaleNetwork);
-      allocatedRewards = 0;
-      claimedRewards = 0;
     }
+
   modifier isOwner() {
       require(owner==msg.sender);
       _;
@@ -42,22 +40,19 @@ contract WhaleRewards{
 
     }
 
-    function distReward() {
-      Vars memory vars;
-      vars.numWhale = whaleNetwork.getCurrentWhaleCount();
-      vars.rewards = this.balance - allocatedRewards + claimedRewards;
-      vars.rewardPerWhale = vars.rewards/vars.numWhale;
-      for (vars.i=0; vars.i<vars.numWhale; vars.i++) {
-        balances[whaleNetwork.whaleList(vars.i)] += vars.rewards;
-      }
-      allocatedRewards += vars.rewards;
-    }
+
 
     function claimReward(address addr) {
-      addr.transfer(balances[addr]);
-      Claimed(addr, balances[addr]);
-      claimedRewards += balances[addr];
-      balances[addr] = 0;
+      Vars memory vars;
+      whaleNetwork.getNetworkShare();
+      whaleNetwork.getWhaleShare(addr);
+      vars.netShare = whaleNetwork.networkShares();
+      (,,vars.whaleShare) = whaleNetwork.getWhale(addr);
+      vars.unclaimedShare = vars.whaleShare - claimedShare[addr];
+      vars.reward = (vars.unclaimedShare * this.balance) / vars.netShare;
+      claimedShare[addr] += vars.unclaimedShare;
+      addr.transfer(vars.reward);
+      Claimed(vars.reward, addr);
 
     }
 

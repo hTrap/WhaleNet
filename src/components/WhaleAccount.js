@@ -76,7 +76,7 @@ class WhaleAccount extends Component {
             <Grid item xs={12} sm={6}>
               <Paper className={this.props.classes.paper}>
 
-              {<div>Becoming a Whale Temporarilly Disabled</div>}
+              {<BecomeWhaleForm/>}
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6}>

@@ -77,7 +77,7 @@ class FollowerAccount extends Component {
           <Grid item xs={12} sm={6}>
             <Paper className={this.props.classes.paper}>
 
-            {}
+            {<RewardClaim/>}
             </Paper>
           </Grid>
             <Grid item xs={12} sm={6}>

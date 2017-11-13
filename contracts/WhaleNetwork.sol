@@ -11,7 +11,9 @@ contract WhaleNetwork {
 
   struct Whale {
     uint id;
-    uint timestamp;
+    uint[] whaleBlocks;
+    uint[] normalBlocks;
+    uint shares;
     bool isWhale;
     bool validated;
     uint[] postList;
@@ -43,7 +45,8 @@ contract WhaleNetwork {
   address[] public whaleList;
   mapping (address => Validator) validators;
   mapping (address => address) public whaleMod;
-
+  uint public networkShares;
+  uint lastBlockShareRecorded;
   //modifiers
 
   modifier isOwner() {
@@ -64,7 +67,7 @@ contract WhaleNetwork {
   function WhaleNetwork(address _owner) {
     owner = _owner;
     numWhales = 0;
-    whaleRequirement = 1000000000000000000000;
+    whaleRequirement = 100;
     numPosts = 0;
   }
 
@@ -74,7 +77,7 @@ contract WhaleNetwork {
   function becomeWhale() payable {
     require(msg.value == whaleRequirement);
     require(!whales[msg.sender].isWhale);
-    whales[msg.sender].timestamp = now;
+    whales[msg.sender].whaleBlocks.push(block.number);
     whales[msg.sender].isWhale = true;
     whaleList.push(msg.sender);
     numWhales++;
@@ -82,12 +85,15 @@ contract WhaleNetwork {
 
   function becomeNormal() {
     require(whales[msg.sender].isWhale);
-    msg.sender.transfer(whaleRequirement);
-    whales[msg.sender].timestamp = now;
+    whales[msg.sender].normalBlocks.push(block.number);
+    whales[msg.sender].shares += (block.number - whales[msg.sender].whaleBlocks[whales[msg.sender].normalBlocks.length -1]);
     whales[msg.sender].isWhale = false;
     whaleList[whales[msg.sender].id] = whaleList[whaleList.length-1];
     delete whaleList[whaleList.length-1];
     numWhales--;
+    networkShares += numWhales * (block.number - lastBlockShareRecorded);
+    lastBlockShareRecorded = block.number;
+    msg.sender.transfer(whaleRequirement);
   }
 
   function designateModerator(address mod) onlyWhale{
@@ -128,6 +134,19 @@ contract WhaleNetwork {
 
 
   //getter functions
+  function getWhaleShare(address _address) returns (uint shares) {
+    if (whales[_address].isWhale) {
+      whales[_address].shares += (block.number - whales[_address].whaleBlocks[whales[_address].whaleBlocks.length-1]);
+    }
+    return whales[_address].shares;
+  }
+
+  function getNetworkShare() returns (uint) {
+    networkShares += (block.number - lastBlockShareRecorded) * numWhales;
+    lastBlockShareRecorded = block.number;
+    return networkShares;
+  }
+
   function isWhale(address _address) constant returns (bool _status) {
     bool status = whales[_address].isWhale;
     return status;
@@ -137,8 +156,8 @@ contract WhaleNetwork {
     balance = this.balance;
   }
 
-  function getWhale(address _addr) public constant returns (uint num, address moderator) {
-      return (whales[_addr].postList.length, whaleMod[_addr]);
+  function getWhale(address _addr) public constant returns (uint num, address moderator, uint shares) {
+      return (whales[_addr].postList.length, whaleMod[_addr], whales[_addr].shares);
   }
 
   function getPost(uint postId) constant returns (uint id, uint timestamp, address whale, uint numFollowers) {
