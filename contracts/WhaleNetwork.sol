@@ -47,6 +47,7 @@ contract WhaleNetwork {
   mapping (address => address) public whaleMod;
   uint public networkShares;
   uint lastBlockShareRecorded;
+  mapping (address => uint) lastWhaleShareRecorded;
   //modifiers
 
   modifier isOwner() {
@@ -86,7 +87,8 @@ contract WhaleNetwork {
   function becomeNormal() {
     require(whales[msg.sender].isWhale);
     whales[msg.sender].normalBlocks.push(block.number);
-    whales[msg.sender].shares += (block.number - whales[msg.sender].whaleBlocks[whales[msg.sender].normalBlocks.length -1]);
+    whales[msg.sender].shares += (block.number - lastWhaleShareRecorded[msg.sender]);
+    lastWhaleShareRecorded[msg.sender] =  block.number;
     whales[msg.sender].isWhale = false;
     whaleList[whales[msg.sender].id] = whaleList[whaleList.length-1];
     delete whaleList[whaleList.length-1];
@@ -136,7 +138,8 @@ contract WhaleNetwork {
   //getter functions
   function getWhaleShare(address _address) returns (uint shares) {
     if (whales[_address].isWhale) {
-      whales[_address].shares += (block.number - whales[_address].whaleBlocks[whales[_address].whaleBlocks.length-1]);
+      whales[_address].shares += (block.number - lastWhaleShareRecorded[_address]);
+      lastWhaleShareRecorded[_address] = block.number;
     }
     return whales[_address].shares;
   }
