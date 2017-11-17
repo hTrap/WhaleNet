@@ -1,20 +1,19 @@
 import React, {Component} from 'react'
-import WhaleNetwork from '../build/contracts/WhaleNetwork.json'
-import WhaleRewards from '../build/contracts/WhaleRewards.json'
-import getWeb3 from './utils/getWeb3'
+import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
+import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
+import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
-import BecomeWhaleForm from './components/forms/BecomeWhaleForm.js'
-import Header from './components/header.js'
-import ActionGrid from './components/actionGrid.js'
-import WhaleInfo from './components/WhaleInfo.js'
-import './css/oswald.css'
-import './css/open-sans.css'
-import './css/pure-min.css'
-import './App.css'
+import RewardClaim from '../forms/rewardClaim.js'
+import Header from '../header.js'
+import ActionGrid from '../actionGrid.js'
+import WhaleInfo from '../WhaleInfo.js'
+import WhaleCheckForm from '../forms/WhaleCheckForm.js'
+import { withStyles } from 'material-ui/styles';
+
 
 
 const divStyle = {
@@ -22,8 +21,20 @@ const divStyle = {
   marginRight:"50px"
 }
 
+const styles  = {
+  root: {
+    flexGrow: 1,
+    marginTop: 30,
+    marginLeft:"50px",
+    marginRight:"50px"
+  },
+  paper: {
+    padding: 16,
+    textAlign: 'center',
+  },
+};
 
-class App extends Component {
+class AppV2 extends Component {
   constructor(props) {
     super(props)
 
@@ -85,34 +96,33 @@ class App extends Component {
     })
   }
 
-  onChange(i, value, tab, ev) {
-    console.log(arguments);
-  }
 
-  onActive(tab) {
-    console.log(arguments);
-  }
-  handleSubmit(event) {
-    event.preventDefault();
-    ReactDOM.render(
-      <MuiThemeProvider>
-      <div>{< BecomeWhaleForm />}</div>
-    </MuiThemeProvider>, document.getElementById('root'));
-  }
   render() {
     return (
       <MuiThemeProvider>
-
-        <div>
-          {< Header />}
           <div>
-          for testing
-          {<BecomeWhaleForm/>}
+          {< Header />}
+
+          <h1 className={this.props.classes.paper}>My Whale Account</h1>
+          <div className={this.props.classes.root}>
+
+          <Grid container spacing={24}>
+
+            <Grid item xs={12}>
+              <Paper className={this.props.classes.paper}>
+
+              {<RewardClaim/>}
+              </Paper>
+            </Grid>
+
+          </Grid>
           </div>
-        </div>
+          </div>
+
       </MuiThemeProvider>
+
     );
   }
 }
 
-export default App
+export default withStyles(styles)(AppV2);

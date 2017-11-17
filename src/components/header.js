@@ -15,6 +15,8 @@ import ReactDOM from 'react-dom'
 import App from '../App.js'
 import Button from 'material-ui/Button';
 import AppV1 from './versions/AppV1.js';
+import AppV2 from './versions/AppV2.js';
+
 
 const imgStyle  = {
   float: 'left',
@@ -44,6 +46,11 @@ class Header extends Component {
     ReactDOM.render(
       <div>{<AppV1/>}</div>, document.getElementById('root'));
   }
+  handleV2OnClick(event) {
+    event.preventDefault()
+    ReactDOM.render(
+      <div>{<AppV2/>}</div>, document.getElementById('root'));
+  }
   render() {
     return (
       <MuiThemeProvider>
@@ -67,7 +74,7 @@ class Header extends Component {
                 <Button raised onClick={this.handleV1OnClick.bind(this)}>
                   v1
                 </Button>
-                <Button raised color="primary" >
+                <Button raised color="primary" onClick={this.handleV2OnClick.bind(this)}>
                   v2
                 </Button>
                 <Button raised color="accent" >
