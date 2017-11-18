@@ -96,7 +96,7 @@ class RewardClaim extends Component {
           from: this.state.address
         }
 
-        var rawTx = txutils.functionTx(whaleClaimV2Instance.abi, 'claimReward',[this.state.follower], txOptions);
+        var rawTx = txutils.functionTx(whaleClaimV2Instance.abi, 'claimReward',[this.state.follower.toLowerCase()], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
