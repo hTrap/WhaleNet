@@ -119,13 +119,13 @@ class RewardClaimV2 extends Component {
             console.log(err);
           } else {
             console.log(result);
-            WhaleRewardsV2.Claimed(function(error, data) {
+            whaleRewardsInstance.Claimed(function(error, data) {
               if (error) {
                 console.log(error);
               } else {
               console.log(data)
               ReactDOM.render(
-              <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()} />}</div>, document.getElementById('result'));}
+              <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
             })
           }
         })
