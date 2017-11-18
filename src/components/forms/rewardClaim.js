@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
+import WhaleClaimV2 from '../../../build/contracts/WhaleClaimV2.json'
 import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
@@ -74,21 +74,17 @@ class RewardClaim extends Component {
   // on form submit this is the action called
   handleSubmit(event) {
     event.preventDefault();
-    event.preventDefault();
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetwork)
-    const whaleRewards = contract(WhaleRewards)
-    whaleRewards.setProvider(this.state.web3.currentProvider)
-    whaleNetwork.setProvider(this.state.web3.currentProvider)
+    const whaleClaimV2 = contract(WhaleClaimV2)
+    whaleClaimV2.setProvider(this.state.web3.currentProvider)
 
     // Declaring this for later so we can chain functions on SimpleStorage.
-    var whaleRewardsInstance
-    var whaleNetworkInstance
+    var whaleClaimV2Instance
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
-        whaleRewardsInstance = instance
+      whaleClaimV2.deployed().then((instance) => {
+        whaleClaimV2Instance = instance
 
         // Stores a given value, 5 by default
 
@@ -96,11 +92,11 @@ class RewardClaim extends Component {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
           gasPrice: this.state.web3.toHex(20000000000),
-          to: whaleRewardsInstance.address,
+          to: whaleClaimV2Instance.address,
           from: this.state.address
         }
 
-        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimReward',[this.state.follower], txOptions);
+        var rawTx = txutils.functionTx(whaleClaimV2Instance.abi, 'claimReward',[this.state.follower], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
@@ -114,7 +110,7 @@ class RewardClaim extends Component {
             console.log(err);
           } else {
             console.log(result);
-            whaleRewardsInstance.Claimed(function(error, data) {
+            whaleClaimV2Instance.Claimed(function(error, data) {
               if (error) {
                 console.log(error);
               } else {

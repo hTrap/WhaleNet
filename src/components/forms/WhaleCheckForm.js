@@ -7,6 +7,7 @@ import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import Alert from '../alert.js'
+import Grid from 'material-ui/Grid';
 
 class WhaleCheckForm extends Component {
   constructor(props) {
@@ -75,15 +76,15 @@ class WhaleCheckForm extends Component {
     return (
       <MuiThemeProvider>
       <form onSubmit={this.handleSubmit}>
-        <Button raised type="submit" color="primary" style={{
-          float: 'right'
-        }}>Check</Button>
+      <Grid container spacing={24}>
+      <Grid item xs={12} >
+          <TextField id="check" fullWidth label="WhaleCoin Address" value={this.state.value} onChange={this.handleChange}/>
+        </Grid>
+        <Grid item xs={12} >
+        <Button raised type="submit" color="primary">Check Whale</Button>
+        </Grid>
+        </Grid>
 
-        <TextField id="check" label="WhaleCoin Address" value={this.state.value} onChange={this.handleChange} floatingLabelText="WhaleCoin Address" style={{
-          backgroundColor: '#ffffff',
-          marginRight: '10px',
-          float: 'right'
-        }}/>
       </form>
       </MuiThemeProvider>
 
