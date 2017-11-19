@@ -116,7 +116,7 @@ class RewardClaim extends Component {
               } else {
               console.log(data)
               ReactDOM.render(
-              <div>{<RewardAlert result={result.toString()} follower={data.args.follower} reward={data.args.reward.toNumber()} />}</div>, document.getElementById('result'));}
+              <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
             })
           }
         })

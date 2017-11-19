@@ -31,7 +31,7 @@ export default class RewardAlert extends React.Component {
               Tx: {this.props.result}
             </DialogContentText>
             <DialogContentText>
-              Follower:
+              Whale:
               {this.props.follower}
             </DialogContentText>
             <DialogContentText>

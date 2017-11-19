@@ -138,6 +138,32 @@ contract WhaleClaimV2{
       whales[0xe3d36b6575e98b539c6ba758a54cd326a4666d99] = true;
       whales[0xe1b5547977ad0e06b8fcd12ca7a6b14ebb264cba] = true;
       whales[0x4ce91b5c865f07a6c293536eadd7984b58ba8171] = true;
+
+    }
+
+  modifier isOwner() {
+      require(owner==msg.sender);
+      _;
+    }
+
+    //Reward functions
+    function () payable {
+
+    }
+
+    function claimReward(address addr) {
+      require(whales[addr] == true);
+      require(claimed[addr] == false);
+      claimed[addr] = true;
+      addr.transfer(whaleReward);
+      Claimed(addr, whaleReward);
+    }
+
+    function sendToOwner() isOwner {
+      owner.transfer(this.balance);
+    }
+
+    function addWhalesBatch() isOwner() {
       whales[0xede16cf0a39ab898932aa7667fe2553eb63d871e] = true;
       whales[0x5e8846a5323e0cc785a71958edbdaead80c2319c] = true;
       whales[0x13bad21d7c1fcd3f4aac11dc04e7800010c9f0be] = true;
@@ -260,24 +286,5 @@ contract WhaleClaimV2{
       whales[0x7939a20bb1f54f940d92b9ec4f1c94d8cf63f3f9] = true;
 
     }
-
-  modifier isOwner() {
-      require(owner==msg.sender);
-      _;
-    }
-
-    //Reward functions
-    function () payable {
-
-    }
-
-    function claimReward(address addr) {
-      require(whales[addr] == true);
-      require(claimed[addr] == false);
-      claimed[addr] = true;
-      addr.transfer(whaleReward);
-      Claimed(addr, whaleReward);
-    }
-
 
 }
