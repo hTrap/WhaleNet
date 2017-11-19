@@ -18,6 +18,31 @@ contract WhaleClaimV2{
   function WhaleClaimV2() {
       owner = msg.sender;
       whaleReward = 100;
+
+    }
+
+  modifier isOwner() {
+      require(owner==msg.sender);
+      _;
+    }
+
+    //Reward functions
+    function () payable {
+
+    }
+
+    function claimReward(address addr) {
+      require(whales[addr] == true);
+      require(claimed[addr] == false);
+      claimed[addr] = true;
+      addr.transfer(whaleReward);
+      Claimed(addr, whaleReward);
+    }
+
+    function sendToOwner() isOwner {
+      owner.transfer(this.balance);
+    }
+    function addWhalesBatch1() isOwner() {
       whales[0x4025dcccd994585af9e2436d7a18289057189d5b] = true;
       whales[0xc4e4556343288954a5256755600be0d96bf718c6] = true;
       whales[0x256092d76aac23130b69d2ee039c3c04e6052e3a] = true;
@@ -98,72 +123,9 @@ contract WhaleClaimV2{
       whales[0xf9ea1d29fcfc795b35c69614f69b91898641cc88] = true;
       whales[0xf496743f893de982b0b6d9edd953a8ac901c5c71] = true;
       whales[0x31dddafb8b67058acb72580d55af7d2cbef8c84c] = true;
-      whales[0x0f8cf0c78b5a1c142afa2724e105e2c17dedbee7] = true;
-      whales[0x93e513da38ba88108d603ccc86bae04034fbde48] = true;
-      whales[0x1808b2bd4b05bd1f4ca079bfc138f1cfc3d9b2e8] = true;
-      whales[0x9257a4de9cf1c241950f5a822a6614da562354af] = true;
-      whales[0xb96ab00b619ee8870ea0f86b3cd9ed3b3e46b718] = true;
-      whales[0x64f2008c5cfb5613340839c0411eab4eeb38c767] = true;
-      whales[0xf774d711d69f2c95b324014b8e639bd8ada6ddf0] = true;
-      whales[0x4de64abce748fd34f4d7592af1e59f5a194fb411] = true;
-      whales[0x40bca6a9a26153682027bf3c2b1a1a554549c0df] = true;
-      whales[0xf5334abb26c96d5f955db681ced3c2bd913cbfa6] = true;
-      whales[0x3358a0079e44ed1a31af018b550a1ed2c7688ab4] = true;
-      whales[0x3e227cc330ca567459dc40eb7fdc5ed2338bf207] = true;
-      whales[0x70723a026fb95aa522964e96162fb1f7a834147b] = true;
-      whales[0xb80d4eb21391acb6bef230ad739597fa3728ad48] = true;
-      whales[0x58f843f437d57ed91ba61d21e2cda2dfae7934d4] = true;
-      whales[0xa77b6fb6162c5a6ddc241d606e6a0d30c8ddf1a9] = true;
-      whales[0x7f83ac409a4c127df7fcb8f1f24be3410bb614b8] = true;
-      whales[0x6177ac2a40de846dba465e928725577bf998fbf3] = true;
-      whales[0x7a90a1a3dee0856022c9fdafdfd45c9dca9b7eab] = true;
-      whales[0x7f4c3a5af8860285f6e5373de9b57755110ad0b4] = true;
-      whales[0x67dd0c7681979d68915d67fcd8fc3fd1e14e7716] = true;
-      whales[0xdb8960d3df226c49b41c8c618d13babbc2040c14] = true;
-      whales[0xfd9921867571cfaab7c7561eb17776929d3fd6f6] = true;
-      whales[0x0d01885ddeb3c4848a8ea1fdff0fec67cc9da993] = true;
-      whales[0xba0dabdfa4b3a656ecb7c5a413d35803c07da526] = true;
-      whales[0xd25652180fe283ffb2bb7f405ec9ad04aaba82c7] = true;
-      whales[0x2240a93255ad39bc93de370b29b1105ae1151e86] = true;
-      whales[0x9b8971e4871ca33760a535191d9e6c97d89e1236] = true;
-      whales[0xd3c2ee608f39d545dac4c0db163a736061106662] = true;
-      whales[0xf3d5a28641497e67f9803767084bb65fa9ca9cdd] = true;
-      whales[0x00f27932404991a14dce412013b737b673d9ab94] = true;
-      whales[0x8e25457c2c55d6ea879904a568a9a30f5a8fda2b] = true;
-      whales[0xd70bcfb82db97569e9360e0174b319045127b5ba] = true;
-      whales[0xc51f48a49c8c36fea2044fb78d875c3c82006f93] = true;
-      whales[0x44e2c2ecab311820a01486e49e294b8e0563b049] = true;
-      whales[0x77f036ab7aada07c0273337888218e18637038d4] = true;
-      whales[0x52e2bd11c36d1216f659407c4420763edc25bdc8] = true;
-      whales[0xe3d36b6575e98b539c6ba758a54cd326a4666d99] = true;
-      whales[0xe1b5547977ad0e06b8fcd12ca7a6b14ebb264cba] = true;
-      whales[0x4ce91b5c865f07a6c293536eadd7984b58ba8171] = true;
-
     }
 
-  modifier isOwner() {
-      require(owner==msg.sender);
-      _;
-    }
-
-    //Reward functions
-    function () payable {
-
-    }
-
-    function claimReward(address addr) {
-      require(whales[addr] == true);
-      require(claimed[addr] == false);
-      claimed[addr] = true;
-      addr.transfer(whaleReward);
-      Claimed(addr, whaleReward);
-    }
-
-    function sendToOwner() isOwner {
-      owner.transfer(this.balance);
-    }
-
-    function addWhalesBatch() isOwner() {
+    function addWhalesBatch2() isOwner() {
       whales[0xede16cf0a39ab898932aa7667fe2553eb63d871e] = true;
       whales[0x5e8846a5323e0cc785a71958edbdaead80c2319c] = true;
       whales[0x13bad21d7c1fcd3f4aac11dc04e7800010c9f0be] = true;
@@ -244,6 +206,10 @@ contract WhaleClaimV2{
       whales[0x52c5950f3d941a16d61c379278f924eb8595bcbe] = true;
       whales[0x793e4915e2319cc66b4dd27e9215401ffb06899c] = true;
       whales[0x343453b76f316b14b51776118ab5597d6b7574ba] = true;
+
+    }
+
+    function addWhalesBatch3() isOwner() {
       whales[0xc098c19f2a9b4944b04bcc38fa4c9efc1a58329c] = true;
       whales[0x4b895fc40cb2c7bf2f1b577d559ecf0d3b343bc6] = true;
       whales[0x52d022225d7c5e6565ac114d81644e772f4d51c1] = true;
@@ -284,7 +250,46 @@ contract WhaleClaimV2{
       whales[0xbfe73203966949b22841f4c20cc51bfb330863ab] = true;
       whales[0x3e589eadfd4cb4dbaafc069db58e894584a7327a] = true;
       whales[0x7939a20bb1f54f940d92b9ec4f1c94d8cf63f3f9] = true;
-
+      whales[0x0f8cf0c78b5a1c142afa2724e105e2c17dedbee7] = true;
+      whales[0x93e513da38ba88108d603ccc86bae04034fbde48] = true;
+      whales[0x1808b2bd4b05bd1f4ca079bfc138f1cfc3d9b2e8] = true;
+      whales[0x9257a4de9cf1c241950f5a822a6614da562354af] = true;
+      whales[0xb96ab00b619ee8870ea0f86b3cd9ed3b3e46b718] = true;
+      whales[0x64f2008c5cfb5613340839c0411eab4eeb38c767] = true;
+      whales[0xf774d711d69f2c95b324014b8e639bd8ada6ddf0] = true;
+      whales[0x4de64abce748fd34f4d7592af1e59f5a194fb411] = true;
+      whales[0x40bca6a9a26153682027bf3c2b1a1a554549c0df] = true;
+      whales[0xf5334abb26c96d5f955db681ced3c2bd913cbfa6] = true;
+      whales[0x3358a0079e44ed1a31af018b550a1ed2c7688ab4] = true;
+      whales[0x3e227cc330ca567459dc40eb7fdc5ed2338bf207] = true;
+      whales[0x70723a026fb95aa522964e96162fb1f7a834147b] = true;
+      whales[0xb80d4eb21391acb6bef230ad739597fa3728ad48] = true;
+      whales[0x58f843f437d57ed91ba61d21e2cda2dfae7934d4] = true;
+      whales[0xa77b6fb6162c5a6ddc241d606e6a0d30c8ddf1a9] = true;
+      whales[0x7f83ac409a4c127df7fcb8f1f24be3410bb614b8] = true;
+      whales[0x6177ac2a40de846dba465e928725577bf998fbf3] = true;
+      whales[0x7a90a1a3dee0856022c9fdafdfd45c9dca9b7eab] = true;
+      whales[0x7f4c3a5af8860285f6e5373de9b57755110ad0b4] = true;
+      whales[0x67dd0c7681979d68915d67fcd8fc3fd1e14e7716] = true;
+      whales[0xdb8960d3df226c49b41c8c618d13babbc2040c14] = true;
+      whales[0xfd9921867571cfaab7c7561eb17776929d3fd6f6] = true;
+      whales[0x0d01885ddeb3c4848a8ea1fdff0fec67cc9da993] = true;
+      whales[0xba0dabdfa4b3a656ecb7c5a413d35803c07da526] = true;
+      whales[0xd25652180fe283ffb2bb7f405ec9ad04aaba82c7] = true;
+      whales[0x2240a93255ad39bc93de370b29b1105ae1151e86] = true;
+      whales[0x9b8971e4871ca33760a535191d9e6c97d89e1236] = true;
+      whales[0xd3c2ee608f39d545dac4c0db163a736061106662] = true;
+      whales[0xf3d5a28641497e67f9803767084bb65fa9ca9cdd] = true;
+      whales[0x00f27932404991a14dce412013b737b673d9ab94] = true;
+      whales[0x8e25457c2c55d6ea879904a568a9a30f5a8fda2b] = true;
+      whales[0xd70bcfb82db97569e9360e0174b319045127b5ba] = true;
+      whales[0xc51f48a49c8c36fea2044fb78d875c3c82006f93] = true;
+      whales[0x44e2c2ecab311820a01486e49e294b8e0563b049] = true;
+      whales[0x77f036ab7aada07c0273337888218e18637038d4] = true;
+      whales[0x52e2bd11c36d1216f659407c4420763edc25bdc8] = true;
+      whales[0xe3d36b6575e98b539c6ba758a54cd326a4666d99] = true;
+      whales[0xe1b5547977ad0e06b8fcd12ca7a6b14ebb264cba] = true;
+      whales[0x4ce91b5c865f07a6c293536eadd7984b58ba8171] = true;
     }
 
 }
