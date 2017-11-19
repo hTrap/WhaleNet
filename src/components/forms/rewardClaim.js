@@ -13,7 +13,7 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import RewardAlert from '../alerts/rewardAlert.js';
-
+import Error from '../error.js'
 
 
 
@@ -108,6 +108,8 @@ class RewardClaim extends Component {
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
           } else {
             console.log(result);
             whaleClaimV2Instance.Claimed(function(error, data) {

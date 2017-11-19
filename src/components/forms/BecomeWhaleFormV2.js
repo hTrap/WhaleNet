@@ -13,7 +13,7 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import Alert from '../alert.js';
-
+import Error from '../error.js';
 
 
 
@@ -106,6 +106,8 @@ class BecomeWhaleFormV2 extends Component {
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
           } else {
             console.log(result);
             ReactDOM.render(
