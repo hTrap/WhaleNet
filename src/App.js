@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import BecomeWhaleForm from './components/forms/BecomeWhaleForm.js'
+import AppV3 from './components/versions/AppV3.js'
 import Header from './components/header.js'
 import ActionGrid from './components/actionGrid.js'
 import WhaleInfo from './components/WhaleInfo.js'
@@ -104,11 +105,7 @@ class App extends Component {
       <MuiThemeProvider>
 
         <div>
-          {< Header />}
-          <div>
-          for testing
-          {<BecomeWhaleForm/>}
-          </div>
+          {<AppV3/>}
         </div>
       </MuiThemeProvider>
     );
