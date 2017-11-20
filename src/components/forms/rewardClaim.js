@@ -13,8 +13,8 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import RewardAlert from '../alerts/rewardAlert.js';
-import Error from '../error.js'
-
+import Error from '../error.js';
+import createKeccakHash from 'keccak';
 
 
 const styles  = {
@@ -95,8 +95,19 @@ class RewardClaim extends Component {
           to: whaleClaimV2Instance.address,
           from: this.state.address
         }
+        var checksumAddr = this.state.follower.toLowerCase().replace('0x','');
+        var hash = createKeccakHash('keccak256').update(checksumAddr).digest('hex')
+        var ret = '0x'
 
-        var rawTx = txutils.functionTx(whaleClaimV2Instance.abi, 'claimReward',[this.state.follower], txOptions);
+        for (var i = 0; i < checksumAddr.length; i++) {
+          if (parseInt(hash[i], 16) >= 8) {
+            ret += checksumAddr[i].toUpperCase()
+          } else {
+            ret += checksumAddr[i]
+          }
+        }
+        console.log(ret)
+        var rawTx = txutils.functionTx(whaleClaimV2Instance.abi, 'claimReward',[ret], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
