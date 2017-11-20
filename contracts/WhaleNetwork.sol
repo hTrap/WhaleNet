@@ -64,7 +64,7 @@ contract WhaleNetwork {
   function WhaleNetwork(address _owner) {
     owner = _owner;
     numWhales = 0;
-    whaleRequirement = 100;
+    whaleRequirement = 1000000000000000000000;
     numPosts = 0;
   }
 

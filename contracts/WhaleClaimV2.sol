@@ -17,7 +17,7 @@ contract WhaleClaimV2{
   uint distBloc;*/
   function WhaleClaimV2() {
       owner = msg.sender;
-      whaleReward = 100;
+      whaleReward = 746600000000000000000;
 
     }
 
@@ -123,6 +123,8 @@ contract WhaleClaimV2{
       whales[0xF9EA1D29fcfc795B35c69614F69B91898641cc88] = true;
       whales[0xf496743F893De982b0b6D9eDd953A8Ac901C5C71] = true;
       whales[0x31ddDAFB8B67058aCb72580D55aF7D2cBef8C84c] = true;
+      whales[0x89Bb2b198c470D610aDC8C6297b34a13ACEfb1Fd] = true;
+
 }
 
     function addWhalesBatch2() isOwner() {

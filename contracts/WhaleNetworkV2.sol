@@ -39,7 +39,7 @@ contract WhaleNetworkV2 {
   function WhaleNetworkV2(address _owner) {
     owner = _owner;
     numWhales = 0;
-    whaleRequirement = 100;
+    whaleRequirement = 1000000000000000000000;
   }
 
   //setter functions

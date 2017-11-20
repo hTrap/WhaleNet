@@ -96,7 +96,7 @@ class BecomeWhaleFormV2 extends Component {
           gasLimit: this.state.web3.toHex(800000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
-          value: 100
+          value: 1000000000000000000000
         }
         var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', this.state.address, txOptions);
         var privateKey = new Buffer(this.state.privateKey, 'hex');
