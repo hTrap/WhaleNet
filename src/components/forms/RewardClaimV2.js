@@ -94,8 +94,11 @@ class RewardClaimV2 extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
-        // Stores a given value, 5 by default
+        whaleNetwork.at(result).then((whaleNetworkInstance) => {
+          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.follower)
+        }).then((block) => {
+          if (this.state.web3.eth.getBlock('latest').number >= block) {
+
 
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
@@ -130,11 +133,16 @@ class RewardClaimV2 extends Component {
               <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
             })
           }
-        })
+        })}
+        else {
+          ReactDOM.render(
+            <div>{<Error/>}</div>, document.getElementById('result'));
+        }
       })
       })
 
-  }
+  })
+}
   // renders the basic form in the root tab space
   render() {
     return (
