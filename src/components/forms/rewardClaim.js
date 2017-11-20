@@ -83,7 +83,7 @@ class RewardClaim extends Component {
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleClaimV2.deployed().then((instance) => {
+      whaleClaimV2.at('0x272a669cd8040d3d8b8c883cde85db7ce5b56373').then((instance) => {
         whaleClaimV2Instance = instance
 
         // Stores a given value, 5 by default
