@@ -12,7 +12,7 @@ import ReactDOM from 'react-dom'
 import BecomeWhaleForm from '../components/forms/BecomeWhaleForm.js'
 import WhaleAccountV2 from './WhaleAccountV2.js'
 import WhaleRewardsV2 from './WhaleRewardsV2.js'
-
+import WhaleStats from './WhaleStats.js'
 
 
 import Header from '../components/header.js'
@@ -68,6 +68,14 @@ class ActionGrid extends Component {
     </MuiThemeProvider>, document.getElementById('root'));
   }
 
+  handleSubmitStats(event) {
+    event.preventDefault();
+    ReactDOM.render(
+      <MuiThemeProvider>
+      <div>{< WhaleStats />}</div>
+    </MuiThemeProvider>, document.getElementById('root'));
+  }
+
   render() {
 
 
@@ -97,6 +105,16 @@ class ActionGrid extends Component {
               <br></br>
               <p>Check/Claim your Whale Rewards</p>
             <form onSubmit={this.handleSubmitReward.bind(this)}>
+              <Button raised type="submit" color="primary">Go</Button>
+            </form>
+            </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={this.props.classes.paper}>
+              <h1>My Whale Stats</h1>
+              <br></br>
+              <p>Experimental</p>
+            <form onSubmit={this.handleSubmitStats.bind(this)}>
               <Button raised type="submit" color="primary">Go</Button>
             </form>
             </Paper>
