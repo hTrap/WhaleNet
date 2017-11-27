@@ -14,7 +14,8 @@ import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import Alert from './alert.js';
 import Error from './error.js';
-
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import Divider from 'material-ui/Divider';
 
 
 const styles  = {
@@ -51,6 +52,49 @@ class WhaleStats extends Component {
     getWeb3.then(results => {
       this.setState({web3: results.web3})
       // Instantiate contract once web3 provided.
+      const contract = require('truffle-contract')
+      const whaleNetwork = contract(WhaleNetworkV2)
+      const whaleRewards = contract(WhaleRewardsV2)
+      whaleRewards.setProvider(this.state.web3.currentProvider)
+      whaleNetwork.setProvider(this.state.web3.currentProvider)
+
+      // Declaring this for later so we can chain functions on SimpleStorage.
+      var whaleRewardsInstance
+      var whaleNetworkInstance
+
+      // Get accounts.
+      this.state.web3.eth.getAccounts((error, accounts) => {
+        whaleRewards.at('0xEcd72a8546a9a306A31Ee143aaD5486F5aB5400b').then((instance) => {
+          whaleRewardsInstance = instance
+
+
+          whaleRewardsInstance.Claimed({}, { fromBlock: this.state.web3.eth.getBlock('latest').number - 1000, toBlock: 'latest' }).get((error, eventResult) => {
+    if (error)
+      console.log('Error in myEvent event handler: ' + error);
+    else
+    console.log(eventResult)
+    var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+      ReactDOM.render(
+        <MuiThemeProvider>
+        <div>
+        <h2>
+        Claims for last 1000 blocks</h2>
+        <list>
+        <ListItem button>
+          <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
+        </ListItem>
+        {items.map(item => (
+          <ListItem button key={`${item.transactionHash}`}>
+            <ListItemText primary={`${item.args.whale}`} secondary={`${item.blockNumber} :: ${item.args.reward.toNumber()/1000000000000000000} WHL`} />
+          </ListItem>
+        ))}
+        </list>
+        </div>
+        </MuiThemeProvider>
+      , document.getElementById('claims'))
+  });
+        })
+      })
     }).catch(() => {
       console.log('Error finding web3.')
     })
@@ -189,6 +233,7 @@ class WhaleStats extends Component {
                 </Grid>
                 </div>
           </form>
+          <div id='claims'></div>
         </div>
       </MuiThemeProvider>
     );
