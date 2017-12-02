@@ -17,6 +17,7 @@ import Button from 'material-ui/Button';
 import AppV1 from './versions/AppV1.js';
 import AppV2 from './versions/AppV2.js';
 import AppV3 from './versions/AppV3.js';
+import AppV4 from './versions/AppV4.js';
 
 
 
@@ -58,6 +59,12 @@ class Header extends Component {
     ReactDOM.render(
       <div>{<AppV3/>}</div>, document.getElementById('root'));
   }
+
+  handleV4OnClick(event) {
+    event.preventDefault()
+    ReactDOM.render(
+      <div>{<AppV4/>}</div>, document.getElementById('root'));
+  }
   render() {
     return (
       <MuiThemeProvider>
@@ -87,7 +94,9 @@ class Header extends Component {
                 <Button raised color="accent" onClick={this.handleV3OnClick.bind(this)}>
                   v3
                 </Button>
-
+                <Button raised color="accent" onClick={this.handleV4OnClick.bind(this)}>
+                  v4
+                </Button>
                 </Grid>
               </Grid>
             </Toolbar>

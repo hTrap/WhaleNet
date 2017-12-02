@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
-import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -81,8 +81,8 @@ class AddPost extends Component {
     event.preventDefault();
     event.preventDefault();
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetwork)
-    const whaleRewards = contract(WhaleRewards)
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
     whaleRewards.setProvider(this.state.web3.currentProvider)
     whaleNetwork.setProvider(this.state.web3.currentProvider)
 
@@ -144,6 +144,7 @@ class AddPost extends Component {
   render() {
     return (
       <MuiThemeProvider>
+      <div>
         <div>
 
           <form onSubmit={this.handleSubmit}>
@@ -173,6 +174,7 @@ class AddPost extends Component {
                 </Grid>
                 </div>
           </form>
+        </div>
         </div>
       </MuiThemeProvider>
     );

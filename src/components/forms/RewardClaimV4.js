@@ -12,8 +12,8 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import Alert from '../alert.js';
-
+import RewardAlert from '../alerts/rewardAlert.js';
+import Error from '../error.js';
 
 
 
@@ -29,13 +29,13 @@ const styles  = {
 };
 
 
-class AddModerator extends Component {
+class RewardClaimV4 extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      follower: '',
       address: '',
-      modAddress: '',
       privateKey: '',
       web3: null
     }
@@ -43,7 +43,8 @@ class AddModerator extends Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleModChange = this.handleModChange.bind(this);
+
+    this.handleFollowerChange = this.handleFollowerChange.bind(this);
   }
 
   componentWillMount() {
@@ -67,13 +68,12 @@ class AddModerator extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleModChange(event) {
-    this.setState({modAddress: event.target.value})
+  handleFollowerChange(event) {
+    this.setState({follower: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
-    event.preventDefault();
-    event.preventDefault();
+    event.preventDefault()
     const contract = require('truffle-contract')
     const whaleNetwork = contract(WhaleNetworkV4)
     const whaleRewards = contract(WhaleRewardsV4)
@@ -94,33 +94,55 @@ class AddModerator extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
+        whaleNetwork.at(result).then((whaleNetworkInstance) => {
+          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.follower)
+        }).then((block) => {
+          if (this.state.web3.eth.getBlock('latest').number >= block) {
+
+
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
           gasPrice: this.state.web3.toHex(20000000000),
-          to: whaleNetworkInstance.address,
-          value: 0
+          to: whaleRewardsInstance.address,
+          from: this.state.address
         }
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'designateModerator', [this.state.modAddress], txOptions);
+
+        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimReward',[this.state.follower], txOptions);
+        console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
+        console.log(2)
         transaction.sign(privateKey);
+        console.log(3)
         var serializedTx = transaction.serialize().toString('hex');
+        console.log(serializedTx)
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
           } else {
             console.log(result);
-            ReactDOM.render(
-              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
-
+            whaleRewardsInstance.Claimed(function(error, data) {
+              if (error) {
+                console.log(error);
+              } else {
+              console.log(data)
+              ReactDOM.render(
+              <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
+            })
+          }
+        })}
+        else {
+          ReactDOM.render(
+            <div>{<Error/>}</div>, document.getElementById('result'));
         }
-        })
-
       })
-    })
-  }
+      })
+
+  })
+}
   // renders the basic form in the root tab space
   render() {
     return (
@@ -132,19 +154,20 @@ class AddModerator extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter Your Address" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
 
               </Grid>
-              <Grid item xs={12}>
-                <TextField fullWidth label="Enter the Moderator's WhaleCoin Address" value={this.state.modAddress} onChange={this.handleModChange} />
+              <Grid item xs={12} >
+                <TextField fullWidth label="Enter Whale Address" value={this.state.follower} onChange={this.handleFollowerChange} />
 
                 </Grid>
+
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Add/Update a Moderator</Button>
+                <Button raised type="submit" color="primary">Claim Reward</Button>
 
                 </Grid>
                 </Grid>
@@ -156,4 +179,4 @@ class AddModerator extends Component {
   }
 }
 
-export default withStyles(styles)(AddModerator);
+export default withStyles(styles)(RewardClaimV4);

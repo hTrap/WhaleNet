@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
-import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -83,8 +83,8 @@ class AddFollowers extends Component {
     event.preventDefault();
     event.preventDefault();
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetwork)
-    const whaleRewards = contract(WhaleRewards)
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
     whaleRewards.setProvider(this.state.web3.currentProvider)
     whaleNetwork.setProvider(this.state.web3.currentProvider)
 
@@ -112,9 +112,9 @@ class AddFollowers extends Component {
           from: this.state.address
         }
         console.log(txOptions)
-        var followersList = this.state.follower.split(" ");
+        var followersList = this.state.follower
         console.log(this.state.pid, this.state.follower, followersList)
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollowers',[this.state.pid, followersList], txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'addFollower',[this.state.pid, followersList], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
@@ -150,7 +150,7 @@ class AddFollowers extends Component {
 
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter Moderator Address" value={this.state.address} onChange={this.handleAddressChange} />
 
             </Grid>
             <Grid item xs={12}>
@@ -166,7 +166,7 @@ class AddFollowers extends Component {
 
                   </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Reward Followers</Button>
+                <Button raised type="submit" color="primary">Add Followers</Button>
 
                 </Grid>
                 </Grid>

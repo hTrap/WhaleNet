@@ -13,7 +13,7 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import Alert from '../alert.js';
-
+import Error from '../error.js';
 
 
 
@@ -29,13 +29,12 @@ const styles  = {
 };
 
 
-class AddModerator extends Component {
+class BecomeWhaleFormV4 extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       address: '',
-      modAddress: '',
       privateKey: '',
       web3: null
     }
@@ -43,7 +42,6 @@ class AddModerator extends Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleModChange = this.handleModChange.bind(this);
   }
 
   componentWillMount() {
@@ -67,9 +65,7 @@ class AddModerator extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleModChange(event) {
-    this.setState({modAddress: event.target.value})
-  }
+
   // on form submit this is the action called
   handleSubmit(event) {
     event.preventDefault();
@@ -97,12 +93,12 @@ class AddModerator extends Component {
         whaleNetworkInstance = whaleNetwork.at(result);
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
-          gasLimit: this.state.web3.toHex(2000000),
+          gasLimit: this.state.web3.toHex(800000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
-          value: 0
+          value: 1000
         }
-        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'designateModerator', [this.state.modAddress], txOptions);
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeWhale', this.state.address, txOptions);
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
         transaction.sign(privateKey);
@@ -110,12 +106,13 @@ class AddModerator extends Component {
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
           } else {
             console.log(result);
             ReactDOM.render(
-              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
-
-        }
+              <div>{<Alert result={result}/>}</div>, document.getElementById('result'));
+          }
         })
 
       })
@@ -126,26 +123,17 @@ class AddModerator extends Component {
     return (
       <MuiThemeProvider>
         <div>
-
-          <form onSubmit={this.handleSubmit}>
-          <div className={this.props.classes.root}>
-
+         <form onSubmit={this.handleSubmit}>
+        <div className={this.props.classes.root}>
           <Grid container spacing={24}>
           <Grid item xs={12} >
             <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
-
             </Grid>
             <Grid item xs={12}>
               <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
-
               </Grid>
               <Grid item xs={12}>
-                <TextField fullWidth label="Enter the Moderator's WhaleCoin Address" value={this.state.modAddress} onChange={this.handleModChange} />
-
-                </Grid>
-              <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Add/Update a Moderator</Button>
-
+                <Button raised type="submit" color="primary">Become a Whale!</Button>
                 </Grid>
                 </Grid>
                 </div>
@@ -156,4 +144,4 @@ class AddModerator extends Component {
   }
 }
 
-export default withStyles(styles)(AddModerator);
+export default withStyles(styles)(BecomeWhaleFormV4);
