@@ -7,17 +7,39 @@ contract WhaleRewardsV4{
   address public owner;
   mapping (address => uint) public claimedShare;
   address networkAddress;
+  mapping (address => uint) public claimedFollowerShare;
+  uint public followerRewards;
+  mapping (address => uint) public lastFollowerClaim;
+
 
   struct Vars {
     uint netShare;
     uint whaleShare;
     uint unclaimedShare;
     uint reward;
+    uint whaleRatio;
+    uint followerRatio;
+    address moderator;
+    uint moderatorRatio;
+  }
+
+  struct FollowerVars {
+    uint followerReward;
+    uint socialShare;
+    uint followerShare;
   }
 
   event Claimed(
     uint reward,
-    address whale
+    address whale,
+    uint moderatorReward,
+    address moderator,
+    uint follwerReward
+    );
+    
+  event FollowerClaimed(
+    uint reward,
+    address follower
     );
 
   WhaleNetworkV4 whaleNetwork;
@@ -53,9 +75,29 @@ contract WhaleRewardsV4{
     vars.unclaimedShare = vars.whaleShare - claimedShare[addr];
     vars.reward = (vars.unclaimedShare * this.balance) / vars.netShare;
     claimedShare[addr] += vars.unclaimedShare;
-    addr.transfer(vars.reward);
+    vars.whaleRatio = vars.reward / 10; // 10%
+    vars.moderatorRatio = vars.reward / 5; // 20%
+    vars.followerRatio = vars.reward - vars.whaleRatio - vars.moderatorRatio;
+    addr.transfer(vars.whaleRatio);
+    vars.moderator = whaleNetwork.moderators(addr);
+    vars.moderator.transfer(vars.moderatorRatio);
+    followerRewards += vars.followerRatio;
     // event that is triggered which I wait for and show it as an alert in the ui
-    Claimed(vars.reward, addr);
+
+    Claimed(vars.whaleRatio, addr, vars.moderatorRatio, vars.moderator, vars.followerRatio);
+  }
+
+  function claimFollowerReward(address addr) {
+    require((block.number - lastFollowerClaim[addr]) >= 1000);
+    FollowerVars memory fvars;
+    fvars.followerShare = whaleNetwork.getFollowerShare(addr);
+    require(fvars.followerShare > 0);
+    fvars.socialShare = whaleNetwork.getSocialShare();
+    fvars.followerReward = ((fvars.followerShare - claimedFollowerShare[addr]) * followerRewards)/fvars.socialShare;
+    lastFollowerClaim[addr] = block.number;
+    claimedFollowerShare[addr] += fvars.followerReward;
+    addr.transfer(fvars.followerReward);
+    FollowerClaimed(fvars.followerReward, addr);
   }
 
   function getNetworkAddress() constant returns (address addr){
