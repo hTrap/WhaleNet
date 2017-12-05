@@ -4,7 +4,7 @@ pragma solidity ^0.4.11;
 contract WhaleNetworkV4 {
 //compiling now
   event Posted(
-      address author,
+      address indexed author,
       string title,
       uint id
   );
@@ -13,7 +13,14 @@ contract WhaleNetworkV4 {
     address follower,
     address moderator
     );
-
+  event BecomeWhale(
+    address whale,
+    uint blockNumber
+    );
+  event BecomeNormal(
+    address whale,
+    uint blockNumber
+    );
   struct Whale {
     uint id;
     uint shares; // keeps track of the whale shares
@@ -78,8 +85,10 @@ contract WhaleNetworkV4 {
     whales[msg.sender].id = id; // now assigned here
     whales[msg.sender].lastBlockShared = block.number;
     whaleList.push(msg.sender);
+    BecomeWhale(msg.sender, block.number);
     numWhales++;
     id++;
+
   }
 
   function becomeNormal() {
@@ -91,6 +100,7 @@ contract WhaleNetworkV4 {
     networkShares += numWhales * (block.number - lastBlockShareRecorded);
     lastBlockShareRecorded = block.number;
     msg.sender.transfer(whaleRequirement);
+    BecomeNormal(msg.sender, block.number);
   }
 
   function designateModerator(address mod) onlyWhale{
@@ -106,8 +116,8 @@ contract WhaleNetworkV4 {
     posts[numPosts].timestamp = now;
     posts[numPosts].whale = whale;
     posts[numPosts].title = postTitle;
-    whales[msg.sender].postIds.push(numPosts);
-    Posted(msg.sender, postTitle, numPosts);
+    whales[whale].postIds.push(numPosts);
+    Posted(whale, postTitle, numPosts);
     numPosts++;
     socialShares++;
   }

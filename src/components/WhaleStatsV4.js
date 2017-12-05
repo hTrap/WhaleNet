@@ -135,24 +135,12 @@ class WhaleStats extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result);
-        var networkBalance = this.state.web3.eth.getBalance(whaleRewardsInstance.address)
-        console.log(networkBalance)
-        var whaleBalance = this.state.web3.eth.getBalance(this.state.address)
-        console.log(whaleBalance)
-        var whaleShare
-        var networkShares
-        var claimedShare
-        whaleNetworkInstance.getWhaleShares(this.state.address).then((res) => {
-          console.log(res)
-          whaleShare = res.toNumber()
-          whaleNetworkInstance.networkShares().then((nshare) => {
-            networkShares = nshare.toNumber()
-            whaleRewardsInstance.claimedShare(this.state.address).then((cShare) => {
-              claimedShare = cShare.toNumber()
-              whaleNetworkInstance.getWhaleLastBlockShared(this.state.address).then((bShare) => {
-                var lastBlockShared = bShare.toNumber()
-                                var shareDiff = (this.state.web3.eth.getBlock('latest').number - lastBlockShared)
-                var estimatedBalance = (shareDiff*networkBalance)/networkShares
+        whaleNetworkInstance.Posted({author:this.state.address},{ fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+  if (error)
+    console.log('Error in myEvent event handler: ' + error);
+  else
+  console.log(eventResult)
+  var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
 
         ReactDOM.render(
           <MuiThemeProvider>
@@ -162,48 +150,44 @@ class WhaleStats extends Component {
           <Grid container spacing={24}>
 
             <Grid item xs={12} sm={3}>
+            <list>
+            <ListItem button>
+              <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
+            </ListItem>
+            {items.map(item => (
+              <ListItem button key={`${item.transactionHash}`}>
+                <ListItemText primary={`${item.args.title}`} secondary={`${item.args.id}`} />
+              </ListItem>
+            ))}
+            </list>
+            </Grid>
+            <Grid item xs={12} sm={3}>
               <Paper className={this.props.classes.paper}>
-              <h3>Network Balance</h3>
-              {networkBalance.toNumber()/1000000000000000000}
+
               </Paper>
             </Grid>
             <Grid item xs={12} sm={3}>
               <Paper className={this.props.classes.paper}>
-              <h3> Whale Balance </h3>
-              {whaleBalance.toNumber()/1000000000000000000}
+
               </Paper>
             </Grid>
             <Grid item xs={12} sm={3}>
               <Paper className={this.props.classes.paper}>
-              <h3> Whale Share </h3>
-              <p> Assuming 1000 whl not withdrawn since last claim </p>
-              {whaleShare + shareDiff}
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
-              <h3> Network Share </h3>
-              {networkShares}
+
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Paper className={this.props.classes.paper}>
-              <h3> Claimed Share </h3>
-              {claimedShare}
+
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Paper className={this.props.classes.paper}>
-              <h3> Last Block Shared </h3>
-              {lastBlockShared}
+
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Paper className={this.props.classes.paper}>
-              <h3> Current estimated unclaimed Balance </h3>
-              <p> Assuming 1000 whl not withdrawn since last claim </p>
-              {estimatedBalance/1000000000000000000}
-              </Paper>
+
             </Grid>
           </Grid>
           </div>
@@ -211,9 +195,6 @@ class WhaleStats extends Component {
       })
     })
   })
-})
-      })
-    })
   }
   // renders the basic form in the root tab space
   render() {
