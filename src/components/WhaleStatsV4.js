@@ -68,33 +68,9 @@ class WhaleStats extends Component {
           whaleRewardsInstance = instance
 
 
-          whaleRewardsInstance.Claimed({}, { fromBlock: this.state.web3.eth.getBlock('latest').number - 1000, toBlock: 'latest' }).get((error, eventResult) => {
-    if (error)
-      console.log('Error in myEvent event handler: ' + error);
-    else
-    console.log(eventResult)
-    var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
-      ReactDOM.render(
-        <MuiThemeProvider>
-        <div>
-        <h2>
-        Claims for last 1000 blocks</h2>
-        <list>
-        <ListItem button>
-          <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
-        </ListItem>
-        {items.map(item => (
-          <ListItem button key={`${item.transactionHash}`}>
-            <ListItemText primary={`${item.args.whale}`} secondary={`${item.blockNumber} :: ${item.args.reward.toNumber()/1000000000000000000} WHL`} />
-          </ListItem>
-        ))}
-        </list>
-        </div>
-        </MuiThemeProvider>
-      , document.getElementById('claims'))
-  });
-        })
+
       })
+    })
     }).catch(() => {
       console.log('Error finding web3.')
     })
@@ -134,13 +110,16 @@ class WhaleStats extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
+        whaleNetworkInstance = whaleNetwork.at(result)
         whaleNetworkInstance.Posted({author:this.state.address},{ fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
   console.log(eventResult)
   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+  whaleNetworkInstance.moderators(this.state.address).then((mod) => {
+
+
 
         ReactDOM.render(
           <MuiThemeProvider>
@@ -148,12 +127,15 @@ class WhaleStats extends Component {
           {<Header/>}
           <h1> Stats for {this.state.address}</h1>
           <Grid container spacing={24}>
-
+          <Grid item xs={12}>
+            <Paper className={this.props.classes.paper}>
+            <h3>Moderator</h3>
+            <p>{mod}</p>
+            </Paper>
+          </Grid>
             <Grid item xs={12} sm={3}>
             <list>
-            <ListItem button>
-              <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
-            </ListItem>
+            <h3>Posts</h3>
             {items.map(item => (
               <ListItem button key={`${item.transactionHash}`}>
                 <ListItemText primary={`${item.args.title}`} secondary={`${item.args.id}`} />
@@ -161,11 +143,7 @@ class WhaleStats extends Component {
             ))}
             </list>
             </Grid>
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
 
-              </Paper>
-            </Grid>
             <Grid item xs={12} sm={3}>
               <Paper className={this.props.classes.paper}>
 
@@ -193,6 +171,7 @@ class WhaleStats extends Component {
           </div>
         </MuiThemeProvider>, document.getElementById('root'));
       })
+    })
     })
   })
   }
