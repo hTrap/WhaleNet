@@ -34,9 +34,9 @@ contract WhaleRewardsV4{
     address whale,
     uint moderatorReward,
     address moderator,
-    uint follwerReward
+    uint followerReward
     );
-    
+
   event FollowerClaimed(
     uint reward,
     address follower

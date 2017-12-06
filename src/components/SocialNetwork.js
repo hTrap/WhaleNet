@@ -15,7 +15,8 @@ import WhaleRewardsV4 from './WhaleRewardsV4.js'
 import WhaleStatsV4 from './WhaleStatsV4.js'
 import WhaleSocial from './WhaleSocial.js'
 import ModeratorSocial from './ModeratorSocial.js'
-// import FollowerSocial from './FollowerSocial.js'
+import FollowerSocial from './FollowerSocial.js'
+import FollowerStats from './FollowerStats.js'
 import Header from '../components/header.js'
 
 
@@ -73,7 +74,15 @@ class SocialNetwork extends Component {
     event.preventDefault();
     ReactDOM.render(
       <MuiThemeProvider>
-      <div></div>
+      <div>{<FollowerSocial/>}</div>
+    </MuiThemeProvider>, document.getElementById('root'));
+  }
+
+  handleSubmitFollowerStats(event) {
+    event.preventDefault();
+    ReactDOM.render(
+      <MuiThemeProvider>
+      <div>{<FollowerStats/>}</div>
     </MuiThemeProvider>, document.getElementById('root'));
   }
 
@@ -117,6 +126,17 @@ class SocialNetwork extends Component {
               <br></br>
               <p>Check/Claim Rewards</p>
             <form onSubmit={this.handleSubmitFollower.bind(this)}>
+              <Button raised type="submit" color="primary">Go</Button>
+            </form>
+            </Paper>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Paper className={this.props.classes.paper}>
+              <h1>Follower Stats</h1>
+              <br></br>
+              <p>Experimental</p>
+            <form onSubmit={this.handleSubmitFollowerStats.bind(this)}>
               <Button raised type="submit" color="primary">Go</Button>
             </form>
             </Paper>
