@@ -10,6 +10,7 @@ contract WhaleRewardsV4{
   mapping (address => uint) public claimedFollowerShare;
   uint public followerRewards;
   mapping (address => uint) public lastFollowerClaim;
+  mapping (address => mapping(uint => bool)) followerClaimedReward;
 
 
   struct Vars {
@@ -24,22 +25,24 @@ contract WhaleRewardsV4{
   }
 
   struct FollowerVars {
-    uint followerReward;
-    uint socialShare;
+    uint numPosts;
+    uint postShares;
     uint followerShare;
+    uint followerReward;
   }
 
   event Claimed(
     uint reward,
-    address whale,
+    address indexed whale,
     uint moderatorReward,
-    address moderator,
+    address indexed moderator,
     uint followerReward
     );
 
   event FollowerClaimed(
     uint reward,
-    address follower
+    address indexed follower,
+    uint indexed postid
     );
 
   WhaleNetworkV4 whaleNetwork;
@@ -87,17 +90,18 @@ contract WhaleRewardsV4{
     Claimed(vars.whaleRatio, addr, vars.moderatorRatio, vars.moderator, vars.followerRatio);
   }
 
-  function claimFollowerReward(address addr) {
-    require((block.number - lastFollowerClaim[addr]) >= 1000);
+  function claimFollowerReward(address addr, uint postid) {
+    require(whaleNetwork.getPostTimeStamp(postid) < (block.number -10000));
+    require(followerClaimedReward[addr][postid] == false);
     FollowerVars memory fvars;
-    fvars.followerShare = whaleNetwork.getFollowerShare(addr);
+    fvars.followerShare = whaleNetwork.getFollowerShare(addr, postid);
     require(fvars.followerShare > 0);
-    fvars.socialShare = whaleNetwork.getSocialShare();
-    fvars.followerReward = ((fvars.followerShare - claimedFollowerShare[addr]) * followerRewards)/fvars.socialShare;
-    lastFollowerClaim[addr] = block.number;
-    claimedFollowerShare[addr] += fvars.followerReward;
+    fvars.postShares = whaleNetwork.getPostFollowers(postid);
+    fvars.numPosts = whaleNetwork.numPosts();
+    fvars.followerReward = (fvars.followerShare * followerRewards)/(fvars.postShares *fvars.numPosts);
+    followerClaimedReward[addr][postid] = true;
     addr.transfer(fvars.followerReward);
-    FollowerClaimed(fvars.followerReward, addr);
+    FollowerClaimed(fvars.followerReward, addr, postid);
   }
 
   function getNetworkAddress() constant returns (address addr){

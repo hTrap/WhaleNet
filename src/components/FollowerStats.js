@@ -68,33 +68,9 @@ class FollowerStats extends Component {
           whaleRewardsInstance = instance
 
 
-          whaleRewardsInstance.Claimed({}, { fromBlock: this.state.web3.eth.getBlock('latest').number - 1000, toBlock: 'latest' }).get((error, eventResult) => {
-    if (error)
-      console.log('Error in myEvent event handler: ' + error);
-    else
-    console.log(eventResult)
-    var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
-      ReactDOM.render(
-        <MuiThemeProvider>
-        <div>
-        <h2>
-        Claims for last 1000 blocks</h2>
-        <list>
-        <ListItem button>
-          <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
-        </ListItem>
-        {items.map(item => (
-          <ListItem button key={`${item.transactionHash}`}>
-            <ListItemText primary={`${item.args.whale}`} secondary={`${item.blockNumber} :: ${item.args.reward.toNumber()/1000000000000000000} WHL`} />
-          </ListItem>
-        ))}
-        </list>
-        </div>
-        </MuiThemeProvider>
-      , document.getElementById('claims'))
-  });
-        })
+
       })
+    })
     }).catch(() => {
       console.log('Error finding web3.')
     })
@@ -134,13 +110,24 @@ class FollowerStats extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result);
-        whaleNetworkInstance.Posted({author:this.state.address},{ fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+        whaleNetworkInstance = whaleNetwork.at(result)
+        whaleNetworkInstance.FollowerAdded(
+          {follower:this.state.address},
+          { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
+  whaleNetworkInstance.FollowerAdded(
+    {whale:this.state.address},
+    { fromBlock:0, toBlock: 'latest' }).get((error, followers) => {
+      if (error)
+        console.log('Error in myEvent event handler: ' + error);
+      else
+      console.log(followers)
   console.log(eventResult)
   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+
+
 
         ReactDOM.render(
           <MuiThemeProvider>
@@ -149,28 +136,20 @@ class FollowerStats extends Component {
           <h1> Stats for {this.state.address}</h1>
           <Grid container spacing={24}>
 
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
             <list>
-            <ListItem button>
-              <ListItemText primary={<h3>Whale</h3>} secondary={<h3>Block number  :: Rewards</h3> } />
-            </ListItem>
+            <h3>Posts Followed</h3>
             {items.map(item => (
               <ListItem button key={`${item.transactionHash}`}>
-                <ListItemText primary={`${item.args.title}`} secondary={`${item.args.id}`} />
+              <Paper className={this.props.classes.paper}>
+
+                <ListItemText primary={`ID: ${item.args.postid}`} secondary={`Block No :${item.blockNumber}`} />
+                </Paper>
               </ListItem>
             ))}
             </list>
             </Grid>
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
 
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
-
-              </Paper>
-            </Grid>
             <Grid item xs={12} sm={3}>
               <Paper className={this.props.classes.paper}>
 
@@ -192,9 +171,10 @@ class FollowerStats extends Component {
           </Grid>
           </div>
         </MuiThemeProvider>, document.getElementById('root'));
-      })
+    })
     })
   })
+})
   }
   // renders the basic form in the root tab space
   render() {
@@ -206,7 +186,7 @@ class FollowerStats extends Component {
         <div className={this.props.classes.root}>
           <Grid container spacing={24}>
           <Grid item xs={12} >
-            <TextField fullWidth label="Enter Whale Address" value={this.state.address} onChange={this.handleAddressChange} />
+            <TextField fullWidth label="Enter Follower Address" value={this.state.address} onChange={this.handleAddressChange} />
             </Grid>
               <Grid item xs={12}>
                 <Button raised type="submit" color="primary">Check Stats!</Button>

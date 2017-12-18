@@ -111,12 +111,22 @@ class WhaleStats extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result)
-        whaleNetworkInstance.Posted({author:this.state.address},{ fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+        whaleNetworkInstance.Posted(
+          {author:this.state.address},
+          { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
+  whaleNetworkInstance.FollowerAdded(
+    {whale:this.state.address},
+    { fromBlock:0, toBlock: 'latest' }).get((error, followers) => {
+      if (error)
+        console.log('Error in myEvent event handler: ' + error);
+      else
+      console.log(followers)
   console.log(eventResult)
   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+
   whaleNetworkInstance.moderators(this.state.address).then((mod) => {
 
 
@@ -133,20 +143,23 @@ class WhaleStats extends Component {
             <p>{mod}</p>
             </Paper>
           </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
             <list>
             <h3>Posts</h3>
             {items.map(item => (
               <ListItem button key={`${item.transactionHash}`}>
+              <Paper className={this.props.classes.paper}>
+
                 <ListItemText primary={`${item.args.title}`} secondary={`${item.args.id}`} />
+                </Paper>
               </ListItem>
             ))}
             </list>
             </Grid>
-
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={6}>
               <Paper className={this.props.classes.paper}>
-
+              <h3>Total Followers</h3>
+              {followers.length}
               </Paper>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -174,6 +187,7 @@ class WhaleStats extends Component {
     })
     })
   })
+})
   }
   // renders the basic form in the root tab space
   render() {

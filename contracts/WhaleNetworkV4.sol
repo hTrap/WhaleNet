@@ -6,21 +6,26 @@ contract WhaleNetworkV4 {
   event Posted(
       address indexed author,
       string title,
-      uint id
+      uint indexed id
   );
+
   event FollowerAdded(
-    uint postid,
-    address follower,
+    address indexed whale,
+    uint indexed postid,
+    address indexed follower,
     address moderator
     );
+
   event BecomeWhale(
     address whale,
     uint blockNumber
     );
+
   event BecomeNormal(
     address whale,
     uint blockNumber
     );
+
   struct Whale {
     uint id;
     uint shares; // keeps track of the whale shares
@@ -35,6 +40,7 @@ contract WhaleNetworkV4 {
     uint id;
     address whale;
     string title;
+    bool expired;
   }
 
   address owner;
@@ -44,8 +50,9 @@ contract WhaleNetworkV4 {
   address[] public whaleList; //we would need this to show a list of whales
   mapping(address => address) public moderators;
   mapping  (uint => address[]) public postFollowers;
-  mapping(address => uint[]) public followedPosts;
+  mapping(address => mapping(uint => uint)) public followedPosts;
   mapping (address => Post[]) public whalePosts;
+
   uint public numPosts;
   mapping (uint => Post) public posts;
    // keep track of the networkShares
@@ -113,21 +120,20 @@ contract WhaleNetworkV4 {
     require(moderators[whale] == msg.sender);
     require(bytes(postTitle).length <= 160);
     posts[numPosts].id = numPosts;
-    posts[numPosts].timestamp = now;
+    posts[numPosts].timestamp = block.number;
     posts[numPosts].whale = whale;
     posts[numPosts].title = postTitle;
     whales[whale].postIds.push(numPosts);
     Posted(whale, postTitle, numPosts);
     numPosts++;
-    socialShares++;
   }
 
   function addFollower(uint postid, address follower) {
     require(moderators[posts[postid].whale] == msg.sender);
+    require(posts[postid].timestamp + 10000 >= block.number);
       postFollowers[postid].push(follower);
-      followedPosts[follower].push(postid);
-      socialShares++;
-      FollowerAdded(postid, follower, msg.sender);
+      followedPosts[follower][postid]++;
+      FollowerAdded(posts[postid].whale, postid, follower, msg.sender);
   }
 
   function updateWhaleShare(address _address) {
@@ -162,10 +168,14 @@ contract WhaleNetworkV4 {
     return whales[_addr].lastBlockShared + 1000;
   }
 
-  function getFollowerShare(address _addr) public constant returns (uint shares) {
-    shares = followedPosts[_addr].length;
+  function getFollowerShare(address _addr, uint postid) public constant returns (uint shares) {
+    shares = followedPosts[_addr][postid];
   }
-  function getSocialShare() public constant returns (uint shares) {
-    return socialShares;
+  function getPostFollowers(uint postid) public constant returns (uint shares) {
+    shares = postFollowers[postid].length;
+  }
+
+  function getPostTimeStamp(uint postid) public constant returns (uint time) {
+    return posts[postid].timestamp;
   }
 }
