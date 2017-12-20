@@ -15,6 +15,7 @@ import Header from '../components/header.js'
 import TextField from 'material-ui/TextField';
 import FollowerRewardClaimBlockCheck from '../components/forms/FollowerRewardClaimBlockCheck.js'
 import FollowerRewardClaimV4 from '../components/forms/FollowerRewardClaimV4.js'
+import FollowerRewardClaimAllPosts from '../components/forms/FollowerRewardClaimAllPosts.js'
 
 
 
@@ -77,6 +78,11 @@ class FollowerSocial extends Component {
         <Grid item xs={12} sm={6}>
           <Paper className={this.props.classes.paper}>
           {<FollowerRewardClaimV4/>}
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper className={this.props.classes.paper}>
+          {<FollowerRewardClaimAllPosts/>}
           </Paper>
         </Grid>
       </Grid>
