@@ -12,7 +12,7 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import RewardAlert from '../alerts/rewardAlert.js';
+import FollowerRewardAlert from '../alerts/FollowerRewardAlert.js';
 import Error from '../error.js';
 
 
@@ -34,6 +34,7 @@ class FollowerRewardClaimV4 extends Component {
     super(props)
 
     this.state = {
+      post: '',
       follower: '',
       address: '',
       privateKey: '',
@@ -45,6 +46,7 @@ class FollowerRewardClaimV4 extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.handleFollowerChange = this.handleFollowerChange.bind(this);
+    this.handlePostChange = this.handlePostChange.bind(this);
   }
 
   componentWillMount() {
@@ -71,6 +73,9 @@ class FollowerRewardClaimV4 extends Component {
   handleFollowerChange(event) {
     this.setState({follower: event.target.value});
   }
+  handlePostChange(event) {
+    this.setState({post: event.target.value});
+  }
   // on form submit this is the action called
   handleSubmit(event) {
     event.preventDefault()
@@ -95,9 +100,9 @@ class FollowerRewardClaimV4 extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.follower)
+          return whaleNetworkInstance.getPostTimeStamp(this.state.post)
         }).then((block) => {
-          if (this.state.web3.eth.getBlock('latest').number >= block) {
+          if (this.state.web3.eth.getBlock('latest').number <= block + 10) {
 
 
         var txOptions = {
@@ -108,7 +113,7 @@ class FollowerRewardClaimV4 extends Component {
           from: this.state.address
         }
 
-        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimFollowerReward',[this.state.follower], txOptions);
+        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimFollowerReward',[this.state.follower, this.state.post], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
@@ -130,7 +135,7 @@ class FollowerRewardClaimV4 extends Component {
               } else {
               console.log(data)
               ReactDOM.render(
-              <div>{<RewardAlert result={result.toString()} follower={data.args.follower} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
+              <div>{<FollowerRewardAlert result={result.toString()} postid={data.args.postid.toNumber()} follower={data.args.follower} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
             })
           }
         })}
@@ -165,6 +170,10 @@ class FollowerRewardClaimV4 extends Component {
                 <TextField fullWidth label="Enter Follower Address" value={this.state.follower} onChange={this.handleFollowerChange} />
 
                 </Grid>
+                <Grid item xs={12} >
+                  <TextField fullWidth label="Enter Post id" value={this.state.post} onChange={this.handlePostChange} />
+
+                  </Grid>
 
               <Grid item xs={12}>
                 <Button raised type="submit" color="primary">Claim Reward</Button>

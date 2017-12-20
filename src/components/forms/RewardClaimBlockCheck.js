@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import WhaleNetworkV2 from '../../../build/contracts/WhaleNetworkV2.json'
-import WhaleRewardsV2 from '../../../build/contracts/WhaleRewardsV2.json'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -76,8 +76,8 @@ class RewardClaimBlockCheck extends Component {
   handleSubmit(event) {
     event.preventDefault()
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetworkV2)
-    const whaleRewards = contract(WhaleRewardsV2)
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
     whaleRewards.setProvider(this.state.web3.currentProvider)
     whaleNetwork.setProvider(this.state.web3.currentProvider)
 

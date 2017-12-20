@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import WhaleNetworkV2 from '../../../build/contracts/WhaleNetworkV2.json'
-import WhaleRewardsV2 from '../../../build/contracts/WhaleRewardsV2.json'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -35,7 +35,7 @@ class FollowerRewardClaimBlockCheck extends Component {
     super(props)
 
     this.state = {
-      whale: '',
+      post: '',
       address: '',
       privateKey: '',
       web3: null
@@ -45,7 +45,7 @@ class FollowerRewardClaimBlockCheck extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.handleWhaleChange = this.handleWhaleChange.bind(this);
+    this.handlePostChange = this.handlePostChange.bind(this);
   }
 
   componentWillMount() {
@@ -69,15 +69,15 @@ class FollowerRewardClaimBlockCheck extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleWhaleChange(event) {
-    this.setState({whale: event.target.value});
+  handlePostChange(event) {
+    this.setState({post: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
     event.preventDefault()
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetworkV2)
-    const whaleRewards = contract(WhaleRewardsV2)
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
     whaleRewards.setProvider(this.state.web3.currentProvider)
     whaleNetwork.setProvider(this.state.web3.currentProvider)
 
@@ -96,11 +96,11 @@ class FollowerRewardClaimBlockCheck extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
+          return whaleNetworkInstance.getPostTimeStamp(this.state.post)
         }).then((block) => {
           console.log(block)
           ReactDOM.render(
-          <div>{<Alert result={block.toString()}/>}</div>, document.getElementById('result'));
+          <div>{<Alert result={block.toNumber() + 10000}/>}</div>, document.getElementById('result'));
         // Stores a given value, 5 by default
 
 
@@ -121,12 +121,12 @@ class FollowerRewardClaimBlockCheck extends Component {
           <Grid container spacing={24}>
 
               <Grid item xs={12} >
-                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
+                <TextField fullWidth label="Enter Post ID" value={this.state.post} onChange={this.handlePostChange} />
 
                 </Grid>
 
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check next block</Button>
+                <Button raised type="submit" color="primary">Check post claimable Block</Button>
 
                 </Grid>
                 </Grid>

@@ -16,6 +16,7 @@ import Alert from './alert.js';
 import Error from './error.js';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 
 const styles  = {
@@ -26,6 +27,14 @@ const styles  = {
   paper: {
     padding: 16,
     textAlign: 'center',
+  },
+  tableroot: {
+    width: '33%',
+    marginTop: 30,
+    overflowX: 'auto',
+  },
+  table: {
+    minWidth: 700,
   },
 };
 
@@ -117,16 +126,23 @@ class FollowerStats extends Component {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
-  whaleNetworkInstance.FollowerAdded(
-    {whale:this.state.address},
-    { fromBlock:0, toBlock: 'latest' }).get((error, followers) => {
+  whaleRewardsInstance.FollowerClaimed(
+    {follower:this.state.address},
+    { fromBlock:0, toBlock: 'latest' }).get((error, followerClaims) => {
       if (error)
         console.log('Error in myEvent event handler: ' + error);
       else
-      console.log(followers)
+      console.log(followerClaims)
   console.log(eventResult)
   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+  var followerClaim = followerClaims.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
 
+  var posts = new Set(eventResult.map(function(obj) { return obj.args.postid.toNumber()}))
+  var claims = new Set(followerClaims.map(function(obj) {return obj.args.postid.toNumber()}))
+    console.log(posts)
+    console.log(claims)
+    var unclaimedPosts = Array.from(posts).filter( function(n) { return !this.has(n) }, claims );
+    console.log(unclaimedPosts)
 
 
         ReactDOM.render(
@@ -136,34 +152,72 @@ class FollowerStats extends Component {
           <h1> Stats for {this.state.address}</h1>
           <Grid container spacing={24}>
 
-            <Grid item xs={12} sm={6}>
-            <list>
-            <h3>Posts Followed</h3>
-            {items.map(item => (
-              <ListItem button key={`${item.transactionHash}`}>
-              <Paper className={this.props.classes.paper}>
 
-                <ListItemText primary={`ID: ${item.args.postid}`} secondary={`Block No :${item.blockNumber}`} />
-                </Paper>
-              </ListItem>
-            ))}
-            </list>
-            </Grid>
+            <Grid item xs={12} sm={4}>
+            <Paper className={this.props.classes.tableroot}>
+    <Table className={this.props.classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell><h2>Posts Followed</h2></TableCell>
 
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {items.map(item => {
+          return (
+            <TableRow key={item.transactionHash}>
+              <TableCell>ID: {item.args.postid.toNumber()} <br></br> Block: {item.blockNumber}</TableCell>
 
-              </Paper>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Paper className={this.props.classes.paper}>
+            <Paper className={this.props.classes.tableroot}>
+    <Table className={this.props.classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell><h2>Posts Claimed</h2></TableCell>
 
-              </Paper>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {followerClaims.map(item => {
+          return (
+            <TableRow key={item.transactionHash}>
+              <TableCell>ID: {item.args.postid.toNumber()} <br></br> Block: {item.blockNumber} <br></br>Claimed: {item.args.reward.toNumber()/1000000000000000000} WHL</TableCell>
+
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Paper className={this.props.classes.paper}>
+            <Paper className={this.props.classes.tableroot}>
+    <Table className={this.props.classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell><h2>Posts Unclaimed</h2></TableCell>
 
-              </Paper>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {unclaimedPosts.map(item => {
+          return (
+            <TableRow key={item}>
+              <TableCell>ID: {item}</TableCell>
+
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
 

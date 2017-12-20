@@ -165,7 +165,7 @@ contract WhaleNetworkV4 {
   }
 
   function getWhaleNextBlockShared(address _addr) public constant returns (uint blocks) {
-    return whales[_addr].lastBlockShared + 1000;
+    return whales[_addr].lastBlockShared + 10;
   }
 
   function getFollowerShare(address _addr, uint postid) public constant returns (uint shares) {
