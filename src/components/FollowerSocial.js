@@ -82,6 +82,7 @@ class FollowerSocial extends Component {
         </Grid>
         <Grid item xs={12}>
           <Paper className={this.props.classes.paper}>
+          <h2>Multi Claim</h2>
           {<FollowerRewardClaimAllPosts/>}
           </Paper>
         </Grid>

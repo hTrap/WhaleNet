@@ -40,7 +40,6 @@ contract WhaleNetworkV4 {
     uint id;
     address whale;
     string title;
-    bool expired;
   }
 
   address owner;
