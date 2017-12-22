@@ -12,7 +12,7 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import RewardAlert from '../alerts/rewardAlert.js';
+import WhaleModRewardAlert from '../alerts/WhaleModRewardAlert.js';
 import Error from '../error.js';
 
 
@@ -34,7 +34,7 @@ class RewardClaimV4 extends Component {
     super(props)
 
     this.state = {
-      follower: '',
+      whale: '',
       address: '',
       privateKey: '',
       web3: null
@@ -43,8 +43,7 @@ class RewardClaimV4 extends Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.handleFollowerChange = this.handleFollowerChange.bind(this);
+    this.handleWhaleChange = this.handleWhaleChange.bind(this);
   }
 
   componentWillMount() {
@@ -68,8 +67,8 @@ class RewardClaimV4 extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleFollowerChange(event) {
-    this.setState({follower: event.target.value});
+  handleWhaleChange(event) {
+    this.setState({whale: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
@@ -83,7 +82,7 @@ class RewardClaimV4 extends Component {
     // Declaring this for later so we can chain functions on SimpleStorage.
     var whaleRewardsInstance
     var whaleNetworkInstance
-
+    var whale = this.state.whale
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
       whaleRewards.deployed().then((instance) => {
@@ -95,11 +94,11 @@ class RewardClaimV4 extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.follower)
+          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
         }).then((block) => {
-          if (this.state.web3.eth.getBlock('latest').number >= block) {
+          if (this.state.web3.eth.getBlock('latest').number >= block.toNumber()) {
 
-
+        var blockBeforeTransaction = this.state.web3.eth.getBlock('latest').number
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
@@ -108,7 +107,7 @@ class RewardClaimV4 extends Component {
           from: this.state.address
         }
 
-        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimReward',[this.state.follower], txOptions);
+        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimReward',[this.state.whale], txOptions);
         console.log(1)
         var privateKey = new Buffer(this.state.privateKey, 'hex');
         var transaction = new tx(rawTx);
@@ -124,13 +123,15 @@ class RewardClaimV4 extends Component {
               <div>{<Error/>}</div>, document.getElementById('result'));
           } else {
             console.log(result);
-            whaleRewardsInstance.Claimed(function(error, data) {
-              if (error) {
-                console.log(error);
-              } else {
+            whaleRewardsInstance.Claimed({whale:whale},
+            { fromBlock:blockBeforeTransaction, toBlock: 'latest' }).get((error, eventResult) => {
+    if (error)
+      console.log('Error in myEvent event handler: ' + error);
+    else {
+              var data = eventResult[0]
               console.log(data)
               ReactDOM.render(
-              <div>{<RewardAlert result={result.toString()} follower={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
+              <div>{<WhaleModRewardAlert moderator={data.args.moderator} moderatorReward={data.args.moderatorReward.toNumber()/1000000000000000000} followerReward={data.args.followerReward.toNumber()/1000000000000000000} result={result.toString()} whale={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
             })
           }
         })}
@@ -162,7 +163,7 @@ class RewardClaimV4 extends Component {
 
               </Grid>
               <Grid item xs={12} >
-                <TextField fullWidth label="Enter Whale Address" value={this.state.follower} onChange={this.handleFollowerChange} />
+                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
 
                 </Grid>
 

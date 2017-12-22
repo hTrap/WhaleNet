@@ -32,6 +32,7 @@ contract WhaleRewardsV4{
   }
 
   event Claimed(
+    uint indexed block,
     uint reward,
     address indexed whale,
     uint moderatorReward,
@@ -80,14 +81,21 @@ contract WhaleRewardsV4{
     claimedShare[addr] += vars.unclaimedShare;
     vars.whaleRatio = vars.reward / 10; // 10%
     vars.moderatorRatio = vars.reward / 5; // 20%
-    vars.followerRatio = vars.reward - vars.whaleRatio - vars.moderatorRatio;
     addr.transfer(vars.whaleRatio);
     vars.moderator = whaleNetwork.moderators(addr);
-    vars.moderator.transfer(vars.moderatorRatio);
-    followerRewards += vars.followerRatio;
+    if (vars.moderator == 0x0000000000000000000000000000000000000000) {
+      vars.followerRatio = vars.reward - vars.whaleRatio;
+      followerRewards += vars.followerRatio;
+      Claimed(vars.whaleRatio, addr, 0, vars.moderator, vars.followerRatio);
+    } else {
+      vars.moderator.transfer(vars.moderatorRatio);
+      vars.followerRatio = vars.reward - vars.whaleRatio - vars.moderatorRatio;
+      followerRewards += vars.followerRatio;
+      Claimed(block.number, vars.whaleRatio, addr, vars.moderatorRatio, vars.moderator, vars.followerRatio);
+
+    }
     // event that is triggered which I wait for and show it as an alert in the ui
 
-    Claimed(vars.whaleRatio, addr, vars.moderatorRatio, vars.moderator, vars.followerRatio);
   }
 
   function claimFollowerReward(address addr, uint postid) {
