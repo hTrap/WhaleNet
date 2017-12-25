@@ -12,9 +12,8 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import RewardAlert from '../alerts/rewardAlert.js';
 import Alert from '../alert.js';
-
+import Error from '../error.js';
 
 
 
@@ -30,12 +29,11 @@ const styles  = {
 };
 
 
-class RewardClaimBlockCheck extends Component {
+class BecomeNormalFormV4 extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      whale: '',
       address: '',
       privateKey: '',
       web3: null
@@ -44,8 +42,6 @@ class RewardClaimBlockCheck extends Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
-    this.handleWhaleChange = this.handleWhaleChange.bind(this);
   }
 
   componentWillMount() {
@@ -69,12 +65,11 @@ class RewardClaimBlockCheck extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleWhaleChange(event) {
-    this.setState({whale: event.target.value});
-  }
+
   // on form submit this is the action called
   handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
+    event.preventDefault();
     const contract = require('truffle-contract')
     const whaleNetwork = contract(WhaleNetworkV4)
     const whaleRewards = contract(WhaleRewardsV4)
@@ -95,20 +90,34 @@ class RewardClaimBlockCheck extends Component {
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         console.log(result)
-        whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
-        }).then((block) => {
-          console.log(block)
-          ReactDOM.render(
-          <div>{<Alert result={block.toString()}/>}</div>, document.getElementById('result'));
-        // Stores a given value, 5 by default
-
-
-      })
-      })
+        whaleNetworkInstance = whaleNetwork.at(result);
+        var txOptions = {
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
+          gasLimit: this.state.web3.toHex(800000),
+          gasPrice: this.state.web3.toHex(20000000000),
+          to: whaleNetworkInstance.address,
+          value: 0
+        }
+        var rawTx = txutils.functionTx(whaleNetworkInstance.abi, 'becomeNormal', this.state.address, txOptions);
+        var privateKey = new Buffer(this.state.privateKey, 'hex');
+        var transaction = new tx(rawTx);
+        transaction.sign(privateKey);
+        var serializedTx = transaction.serialize().toString('hex');
+        this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
+          if (err) {
+            console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
+          } else {
+            console.log(result);
+            ReactDOM.render(
+              <div>{<Alert result={result.toString()}/>}</div>, document.getElementById('result'));
+          }
         })
-      }
 
+      })
+    })
+  }
   // renders the basic form in the root tab space
   render() {
     return (
@@ -119,14 +128,16 @@ class RewardClaimBlockCheck extends Component {
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
+          <Grid item xs={12} >
+            <TextField fullWidth label="Enter WhaleCoin addr w/ 1000 WHL" value={this.state.address} onChange={this.handleAddressChange} />
 
-              <Grid item xs={12} >
-                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
 
-                </Grid>
-
+              </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check next block</Button>
+                <Button raised type="submit" color="primary">Stop being a Whale!</Button>
 
                 </Grid>
                 </Grid>
@@ -138,4 +149,4 @@ class RewardClaimBlockCheck extends Component {
   }
 }
 
-export default withStyles(styles)(RewardClaimBlockCheck);
+export default withStyles(styles)(BecomeNormalFormV4);

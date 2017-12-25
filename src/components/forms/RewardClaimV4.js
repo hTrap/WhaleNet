@@ -12,9 +12,8 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import RewardAlert from '../alerts/rewardAlert.js';
-import Alert from '../alert.js';
-
+import WhaleModRewardAlert from '../alerts/WhaleModRewardAlert.js';
+import Error from '../error.js';
 
 
 
@@ -30,7 +29,7 @@ const styles  = {
 };
 
 
-class RewardClaimBlockCheck extends Component {
+class RewardClaimV4 extends Component {
   constructor(props) {
     super(props)
 
@@ -44,7 +43,6 @@ class RewardClaimBlockCheck extends Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-
     this.handleWhaleChange = this.handleWhaleChange.bind(this);
   }
 
@@ -84,7 +82,7 @@ class RewardClaimBlockCheck extends Component {
     // Declaring this for later so we can chain functions on SimpleStorage.
     var whaleRewardsInstance
     var whaleNetworkInstance
-
+    var whale = this.state.whale
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
       whaleRewards.deployed().then((instance) => {
@@ -98,17 +96,54 @@ class RewardClaimBlockCheck extends Component {
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
           return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
         }).then((block) => {
-          console.log(block)
+          if (this.state.web3.eth.getBlock('latest').number >= block.toNumber()) {
+
+        var blockBeforeTransaction = this.state.web3.eth.getBlock('latest').number
+        var txOptions = {
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
+          gasLimit: this.state.web3.toHex(2000000),
+          gasPrice: this.state.web3.toHex(20000000000),
+          to: whaleRewardsInstance.address,
+          from: this.state.address
+        }
+
+        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimReward',[this.state.whale], txOptions);
+        console.log(1)
+        var privateKey = new Buffer(this.state.privateKey, 'hex');
+        var transaction = new tx(rawTx);
+        console.log(2)
+        transaction.sign(privateKey);
+        console.log(3)
+        var serializedTx = transaction.serialize().toString('hex');
+        console.log(serializedTx)
+        this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
+          if (err) {
+            console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
+          } else {
+            console.log(result);
+            whaleRewardsInstance.Claimed({whale:whale},
+            { fromBlock:blockBeforeTransaction, toBlock: 'latest' }).get((error, eventResult) => {
+    if (error)
+      console.log('Error in myEvent event handler: ' + error);
+    else {
+              var data = eventResult[0]
+              console.log(data)
+              ReactDOM.render(
+              <div>{<WhaleModRewardAlert moderator={data.args.moderator} moderatorReward={data.args.moderatorReward.toNumber()/1000000000000000000} followerReward={data.args.followerReward.toNumber()/1000000000000000000} result={result.toString()} whale={data.args.whale} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
+            })
+          }
+        })}
+        else {
           ReactDOM.render(
-          <div>{<Alert result={block.toString()}/>}</div>, document.getElementById('result'));
-        // Stores a given value, 5 by default
-
-
+            <div>{<Error/>}</div>, document.getElementById('result'));
+        }
       })
       })
-        })
-      }
 
+  })
+}
   // renders the basic form in the root tab space
   render() {
     return (
@@ -119,14 +154,21 @@ class RewardClaimBlockCheck extends Component {
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
+          <Grid item xs={12} >
+            <TextField fullWidth label="Enter Your Address" value={this.state.address} onChange={this.handleAddressChange} />
 
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
+
+              </Grid>
               <Grid item xs={12} >
                 <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
 
                 </Grid>
 
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check next block</Button>
+                <Button raised type="submit" color="primary">Claim Reward</Button>
 
                 </Grid>
                 </Grid>
@@ -138,4 +180,4 @@ class RewardClaimBlockCheck extends Component {
   }
 }
 
-export default withStyles(styles)(RewardClaimBlockCheck);
+export default withStyles(styles)(RewardClaimV4);

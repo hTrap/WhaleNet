@@ -30,12 +30,12 @@ const styles  = {
 };
 
 
-class RewardClaimBlockCheck extends Component {
+class FollowerRewardClaimBlockCheck extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      whale: '',
+      post: '',
       address: '',
       privateKey: '',
       web3: null
@@ -45,7 +45,7 @@ class RewardClaimBlockCheck extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.handleWhaleChange = this.handleWhaleChange.bind(this);
+    this.handlePostChange = this.handlePostChange.bind(this);
   }
 
   componentWillMount() {
@@ -69,8 +69,8 @@ class RewardClaimBlockCheck extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleWhaleChange(event) {
-    this.setState({whale: event.target.value});
+  handlePostChange(event) {
+    this.setState({post: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
@@ -96,11 +96,11 @@ class RewardClaimBlockCheck extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
+          return whaleNetworkInstance.getPostTimeStamp(this.state.post)
         }).then((block) => {
           console.log(block)
           ReactDOM.render(
-          <div>{<Alert result={block.toString()}/>}</div>, document.getElementById('result'));
+          <div>{<Alert result={block.toNumber() + 10000}/>}</div>, document.getElementById('result'));
         // Stores a given value, 5 by default
 
 
@@ -121,12 +121,12 @@ class RewardClaimBlockCheck extends Component {
           <Grid container spacing={24}>
 
               <Grid item xs={12} >
-                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
+                <TextField fullWidth label="Enter Post ID" value={this.state.post} onChange={this.handlePostChange} />
 
                 </Grid>
 
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check next block</Button>
+                <Button raised type="submit" color="primary">Check post claimable Block</Button>
 
                 </Grid>
                 </Grid>
@@ -138,4 +138,4 @@ class RewardClaimBlockCheck extends Component {
   }
 }
 
-export default withStyles(styles)(RewardClaimBlockCheck);
+export default withStyles(styles)(FollowerRewardClaimBlockCheck);

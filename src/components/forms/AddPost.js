@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import WhaleNetwork from '../../../build/contracts/WhaleNetwork.json'
-import WhaleRewards from '../../../build/contracts/WhaleRewards.json'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -81,8 +81,8 @@ class AddPost extends Component {
     event.preventDefault();
     event.preventDefault();
     const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetwork)
-    const whaleRewards = contract(WhaleRewards)
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
     whaleRewards.setProvider(this.state.web3.currentProvider)
     whaleNetwork.setProvider(this.state.web3.currentProvider)
 
@@ -102,7 +102,9 @@ class AddPost extends Component {
         console.log(result)
         whaleNetwork.at(result).then((whaleNet) => {
             whaleNetworkInstance = whaleNet;
-
+        var address = this.state.address
+        var whale = this.state.whale
+        whaleNetworkInstance.numPosts().then((postid) => {
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
           gasLimit: this.state.web3.toHex(2000000),
@@ -121,22 +123,29 @@ class AddPost extends Component {
         console.log(3)
         var serializedTx = transaction.serialize().toString('hex');
         console.log(serializedTx)
+        var posts = []
         this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
           if (err) {
             console.log(err);
           } else {
             console.log(result);
-            whaleNetworkInstance.Posted(function(error, data) {
+            whaleNetworkInstance.Posted({author:whale, id:postid},
+            { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+    if (error)
+      console.log('Error in myEvent event handler: ' + error);
+    else
               if (error) {
                 console.log(error);
               } else {
-              console.log(data)
+                var data = eventResult[0]
               ReactDOM.render(
               <div>{<PostAlert result={result.toString()} id={data.args.id.toNumber()} author={data.args.author} title={data.args.title}/>}</div>, document.getElementById('result'));}
             })
+
           }
         })
       })
+    })
       })
     })
   }
@@ -144,6 +153,7 @@ class AddPost extends Component {
   render() {
     return (
       <MuiThemeProvider>
+      <div>
         <div>
 
           <form onSubmit={this.handleSubmit}>
@@ -173,6 +183,7 @@ class AddPost extends Component {
                 </Grid>
                 </div>
           </form>
+        </div>
         </div>
       </MuiThemeProvider>
     );

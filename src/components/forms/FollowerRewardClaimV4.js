@@ -12,9 +12,8 @@ import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import RewardAlert from '../alerts/rewardAlert.js';
-import Alert from '../alert.js';
-
+import FollowerRewardAlert from '../alerts/FollowerRewardAlert.js';
+import Error from '../error.js';
 
 
 
@@ -30,12 +29,13 @@ const styles  = {
 };
 
 
-class RewardClaimBlockCheck extends Component {
+class FollowerRewardClaimV4 extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      whale: '',
+      post: '',
+      follower: '',
       address: '',
       privateKey: '',
       web3: null
@@ -45,7 +45,8 @@ class RewardClaimBlockCheck extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.handleWhaleChange = this.handleWhaleChange.bind(this);
+    this.handleFollowerChange = this.handleFollowerChange.bind(this);
+    this.handlePostChange = this.handlePostChange.bind(this);
   }
 
   componentWillMount() {
@@ -69,8 +70,11 @@ class RewardClaimBlockCheck extends Component {
     this.setState({address: event.target.value});
   }
 
-  handleWhaleChange(event) {
-    this.setState({whale: event.target.value});
+  handleFollowerChange(event) {
+    this.setState({follower: event.target.value});
+  }
+  handlePostChange(event) {
+    this.setState({post: event.target.value});
   }
   // on form submit this is the action called
   handleSubmit(event) {
@@ -96,19 +100,54 @@ class RewardClaimBlockCheck extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getWhaleNextBlockShared(this.state.whale)
+          return whaleNetworkInstance.getPostTimeStamp(this.state.post)
         }).then((block) => {
-          console.log(block)
+          if (this.state.web3.eth.getBlock('latest').number <= block + 10000) {
+
+
+        var txOptions = {
+          nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
+          gasLimit: this.state.web3.toHex(2000000),
+          gasPrice: this.state.web3.toHex(20000000000),
+          to: whaleRewardsInstance.address,
+          from: this.state.address
+        }
+
+        var rawTx = txutils.functionTx(whaleRewardsInstance.abi, 'claimFollowerReward',[this.state.follower, this.state.post], txOptions);
+        console.log(1)
+        var privateKey = new Buffer(this.state.privateKey, 'hex');
+        var transaction = new tx(rawTx);
+        console.log(2)
+        transaction.sign(privateKey);
+        console.log(3)
+        var serializedTx = transaction.serialize().toString('hex');
+        console.log(serializedTx)
+        this.state.web3.eth.sendRawTransaction('0x' + serializedTx, function(err, result) {
+          if (err) {
+            console.log(err);
+            ReactDOM.render(
+              <div>{<Error/>}</div>, document.getElementById('result'));
+          } else {
+            console.log(result);
+            whaleRewardsInstance.FollowerClaimed(function(error, data) {
+              if (error) {
+                console.log(error);
+              } else {
+              console.log(data)
+              ReactDOM.render(
+              <div>{<FollowerRewardAlert result={result.toString()} postid={data.args.postid.toNumber()} follower={data.args.follower} reward={data.args.reward.toNumber()/1000000000000000000} />}</div>, document.getElementById('result'));}
+            })
+          }
+        })}
+        else {
           ReactDOM.render(
-          <div>{<Alert result={block.toString()}/>}</div>, document.getElementById('result'));
-        // Stores a given value, 5 by default
-
-
+            <div>{<Error/>}</div>, document.getElementById('result'));
+        }
       })
       })
-        })
-      }
 
+  })
+}
   // renders the basic form in the root tab space
   render() {
     return (
@@ -119,14 +158,25 @@ class RewardClaimBlockCheck extends Component {
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
+          <Grid item xs={12} >
+            <TextField fullWidth label="Enter Your Address" value={this.state.address} onChange={this.handleAddressChange} />
 
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth label="Enter private key for address" value={this.state.privateKey} onChange={this.handleKeyChange} />
+
+              </Grid>
               <Grid item xs={12} >
-                <TextField fullWidth label="Enter Whale Address" value={this.state.whale} onChange={this.handleWhaleChange} />
+                <TextField fullWidth label="Enter Follower Address" value={this.state.follower} onChange={this.handleFollowerChange} />
 
                 </Grid>
+                <Grid item xs={12} >
+                  <TextField fullWidth label="Enter Post id" value={this.state.post} onChange={this.handlePostChange} />
+
+                  </Grid>
 
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check next block</Button>
+                <Button raised type="submit" color="primary">Claim Reward</Button>
 
                 </Grid>
                 </Grid>
@@ -138,4 +188,4 @@ class RewardClaimBlockCheck extends Component {
   }
 }
 
-export default withStyles(styles)(RewardClaimBlockCheck);
+export default withStyles(styles)(FollowerRewardClaimV4);

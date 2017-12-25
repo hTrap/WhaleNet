@@ -3,13 +3,15 @@ import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import React, {Component} from 'react'
-import WhaleNetwork from '../../build/contracts/WhaleNetwork.json'
-import WhaleRewards from '../../build/contracts/WhaleRewards.json'
+import WhaleNetworkV4 from '../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../build/contracts/WhaleRewardsV4.json'
 import getWeb3 from '../utils/getWeb3'
 import Button from 'material-ui/Button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
-import AddModerator from '../components/forms/AddModerator.js'
+import RewardClaimBlockCheck from '../components/forms/RewardClaimBlockCheck.js'
+import RewardClaimV4 from '../components/forms/RewardClaimV4.js'
+import RewardClaimStats from '../components/forms/RewardClaimStats.js'
 import Header from '../components/header.js'
 import TextField from 'material-ui/TextField';
 
@@ -30,7 +32,7 @@ const styles  = {
 };
 
 
-class ModeratorAccount extends Component {
+class whaleRewardsV4 extends Component {
   constructor(props) {
     super(props)
 
@@ -43,13 +45,6 @@ class ModeratorAccount extends Component {
 
 
 
-  onChange(i, value, tab, ev) {
-    console.log(arguments);
-  }
-
-  onActive(tab) {
-    console.log(arguments);
-  }
 
   render() {
 
@@ -61,17 +56,28 @@ class ModeratorAccount extends Component {
           <div>
           {< Header />}
 
-          <h1 className={this.props.classes.paper}>My Moderator Account</h1>
+          <h1 className={this.props.classes.paper}>My Whale Rewards</h1>
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>
 
-            <Grid item xs={12}>
-              <Paper className={this.props.classes.paper}>
 
-              {<AddModerator/>}
+            <Grid item xs={12} sm={6}>
+              <Paper className={this.props.classes.paper}>
+              {<RewardClaimBlockCheck/>}
               </Paper>
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <Paper className={this.props.classes.paper}>
+              {<RewardClaimV4/>}
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper className={this.props.classes.paper}>
+              {<RewardClaimStats/>}
+              </Paper>
+            </Grid>
+
           </Grid>
           </div>
           </div>
@@ -82,4 +88,4 @@ class ModeratorAccount extends Component {
 }
 
 
-export default withStyles(styles)(ModeratorAccount);
+export default withStyles(styles)(whaleRewardsV4);
