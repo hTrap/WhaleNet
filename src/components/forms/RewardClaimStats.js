@@ -1,19 +1,19 @@
 import React, {Component} from 'react'
-import WhaleNetworkV4 from '../../build/contracts/WhaleNetworkV4.json'
-import WhaleRewardsV4 from '../../build/contracts/WhaleRewardsV4.json'
-import getWeb3 from '../utils/getWeb3'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
+import getWeb3 from '../../utils/getWeb3'
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import {keystore, txutils} from 'eth-lightwallet'
 import tx from 'ethereumjs-tx'
-import Header from './header.js'
+import Header from '../header.js'
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
-import Alert from './alert.js';
-import Error from './error.js';
+import Alert from '../alert.js';
+import Error from '../error.js';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
@@ -38,7 +38,7 @@ const styles  = {
 };
 
 
-class WhaleStats extends Component {
+class RewardClaimStats extends Component {
   constructor(props) {
     super(props)
 
@@ -119,23 +119,16 @@ class WhaleStats extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetworkInstance = whaleNetwork.at(result)
-        whaleNetworkInstance.Posted(
-          {author:this.state.address},
+        whaleRewardsInstance.Claimed(
+          {whale:this.state.address},
           { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
-  whaleNetworkInstance.FollowerAdded(
-    {whale:this.state.address},
-    { fromBlock:0, toBlock: 'latest' }).get((error, followers) => {
-      if (error)
-        console.log('Error in myEvent event handler: ' + error);
-      else
-      console.log(followers)
-  console.log(eventResult)
+
   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
 
-  whaleNetworkInstance.moderators(this.state.address).then((mod) => {
+
 
 
 
@@ -143,26 +136,14 @@ class WhaleStats extends Component {
           <MuiThemeProvider>
           <div>
           {<Header/>}
-          <h1> Stats for {this.state.address}</h1>
+          <h1> Claims for {this.state.address}</h1>
           <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <Paper className={this.props.classes.paper}>
-            <h3>Moderator</h3>
-            <p>{mod}</p>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-            <Paper className={this.props.classes.paper}>
-            <h3>Total Followers</h3>
-            <p>{followers.length}</p>
-            </Paper>
-          </Grid>
-          <Grid item xs={12}>
-          <Paper className={this.props.classes.tableroot}>
+          <Grid item xs={12} >
+          <Paper>
   <Table className={this.props.classes.table}>
     <TableHead>
       <TableRow>
-        <TableCell><h2>Posts</h2></TableCell>
+        <TableCell><h2>Claims</h2></TableCell>
 
       </TableRow>
     </TableHead>
@@ -170,7 +151,7 @@ class WhaleStats extends Component {
       {items.map(item => {
         return (
           <TableRow key={item.transactionHash}>
-            <TableCell>ID: {item.args.id.toNumber()} <br></br> Block: {item.blockNumber} <br></br>Title: {item.args.title} </TableCell>
+            <TableCell> Moderator: {item.args.moderator} Reward: {item.args.moderatorReward.toNumber()/1000000000000000000}  Whale: {item.args.whale} Reward: {item.args.reward.toNumber()/1000000000000000000}</TableCell>
 
           </TableRow>
         );
@@ -180,30 +161,12 @@ class WhaleStats extends Component {
 </Paper>
         </Grid>
 
-            <Grid item xs={12} sm={3}>
-              <Paper className={this.props.classes.paper}>
 
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Paper className={this.props.classes.paper}>
-
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Paper className={this.props.classes.paper}>
-
-              </Paper>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-
-            </Grid>
           </Grid>
           </div>
         </MuiThemeProvider>, document.getElementById('root'));
       })
-    })
-    })
+
   })
 })
   }
@@ -212,7 +175,7 @@ class WhaleStats extends Component {
     return (
       <MuiThemeProvider>
         <div>
-        {<Header/>}
+          <h3> Check Claims </h3>
          <form onSubmit={this.handleSubmit}>
         <div className={this.props.classes.root}>
           <Grid container spacing={24}>
@@ -220,7 +183,7 @@ class WhaleStats extends Component {
             <TextField fullWidth label="Enter Whale Address" value={this.state.address} onChange={this.handleAddressChange} />
             </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check Stats!</Button>
+                <Button raised type="submit" color="primary">Check Clams!</Button>
                 </Grid>
                 </Grid>
                 </div>
@@ -232,4 +195,4 @@ class WhaleStats extends Component {
   }
 }
 
-export default withStyles(styles)(WhaleStats);
+export default withStyles(styles)(RewardClaimStats);

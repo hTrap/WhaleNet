@@ -11,6 +11,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
 import RewardClaimBlockCheck from '../components/forms/RewardClaimBlockCheck.js'
 import RewardClaimV4 from '../components/forms/RewardClaimV4.js'
+import RewardClaimStats from '../components/forms/RewardClaimStats.js'
 import Header from '../components/header.js'
 import TextField from 'material-ui/TextField';
 
@@ -71,6 +72,12 @@ class whaleRewardsV4 extends Component {
               {<RewardClaimV4/>}
               </Paper>
             </Grid>
+            <Grid item xs={12}>
+              <Paper className={this.props.classes.paper}>
+              {<RewardClaimStats/>}
+              </Paper>
+            </Grid>
+
           </Grid>
           </div>
           </div>
