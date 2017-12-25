@@ -192,7 +192,7 @@ class RewardClaimStats extends Component {
             <TextField fullWidth label="Enter Whale Address" value={this.state.address} onChange={this.handleAddressChange} />
             </Grid>
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check Clams!</Button>
+                <Button raised type="submit" color="primary">Check Claims!</Button>
                 </Grid>
                 </Grid>
                 </div>
