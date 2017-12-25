@@ -143,7 +143,12 @@ class RewardClaimStats extends Component {
   <Table className={this.props.classes.table}>
     <TableHead>
       <TableRow>
-        <TableCell><h2>Claims</h2></TableCell>
+      <TableCell><h2>Block</h2></TableCell>
+        <TableCell><h2>Moderator</h2></TableCell>
+        <TableCell><h2>Moderator Reward</h2></TableCell>
+        <TableCell><h2>Whale</h2></TableCell>
+        <TableCell><h2>Whale Reward</h2></TableCell>
+
 
       </TableRow>
     </TableHead>
@@ -151,7 +156,11 @@ class RewardClaimStats extends Component {
       {items.map(item => {
         return (
           <TableRow key={item.transactionHash}>
-            <TableCell> Moderator: {item.args.moderator} Reward: {item.args.moderatorReward.toNumber()/1000000000000000000}  Whale: {item.args.whale} Reward: {item.args.reward.toNumber()/1000000000000000000}</TableCell>
+            <TableCell>{item.blockNumber}</TableCell>
+            <TableCell>{item.args.moderator}</TableCell>
+            <TableCell>{item.args.moderatorReward.toNumber()/1000000000000000000}</TableCell>
+            <TableCell>{item.args.whale}</TableCell>
+            <TableCell>{item.args.reward.toNumber()/1000000000000000000}</TableCell>
 
           </TableRow>
         );
