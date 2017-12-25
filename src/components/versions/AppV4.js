@@ -100,7 +100,6 @@ class AppV4 extends Component {
           <div>
           {< Header />}
 
-          <h1 className={this.props.classes.paper}>My Whale Account</h1>
           <div className={this.props.classes.root}>
 
           <Grid container spacing={24}>

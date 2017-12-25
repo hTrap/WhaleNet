@@ -94,7 +94,7 @@ class Header extends Component {
                 <Button raised color="accent" onClick={this.handleV3OnClick.bind(this)}>
                   v3
                 </Button>
-                <Button raised color="accent" onClick={this.handleV4OnClick.bind(this)}>
+                <Button raised style={{ backgroundColor: 'grey', color: 'white' }} onClick={this.handleV4OnClick.bind(this)}>
                   v4
                 </Button>
                 </Grid>

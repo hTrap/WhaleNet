@@ -102,7 +102,7 @@ class FollowerRewardClaimV4 extends Component {
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
           return whaleNetworkInstance.getPostTimeStamp(this.state.post)
         }).then((block) => {
-          if (this.state.web3.eth.getBlock('latest').number <= block + 10) {
+          if (this.state.web3.eth.getBlock('latest').number <= block + 10000) {
 
 
         var txOptions = {

@@ -17,12 +17,12 @@ contract WhaleNetworkV4 {
     );
 
   event BecomeWhale(
-    address whale,
+    address indexed whale,
     uint blockNumber
     );
 
   event BecomeNormal(
-    address whale,
+    address indexed whale,
     uint blockNumber
     );
 
@@ -78,7 +78,7 @@ contract WhaleNetworkV4 {
   function WhaleNetworkV4(address _owner) {
     owner = _owner;
     numWhales = 0;
-    whaleRequirement = 1000;
+    whaleRequirement = 1000000000000000000000;
     numPosts = 0;
     socialShares = 0;
   }
@@ -164,7 +164,7 @@ contract WhaleNetworkV4 {
   }
 
   function getWhaleNextBlockShared(address _addr) public constant returns (uint blocks) {
-    return whales[_addr].lastBlockShared + 10;
+    return whales[_addr].lastBlockShared + 1000;
   }
 
   function getFollowerShare(address _addr, uint postid) public constant returns (uint shares) {

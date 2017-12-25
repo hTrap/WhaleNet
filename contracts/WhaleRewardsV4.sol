@@ -65,7 +65,7 @@ contract WhaleRewardsV4{
   }
 
   function claimReward(address addr) {
-    require(block.number - whaleNetwork.getWhaleLastBlockShared(addr) >= 10);
+    require(block.number - whaleNetwork.getWhaleLastBlockShared(addr) >= 1000);
     Vars memory vars;
     // these functions update the networkshare and the whale share and change the state
     // this is the reason the blocks mined increase on claiming reward
@@ -99,7 +99,7 @@ contract WhaleRewardsV4{
   }
 
   function claimFollowerReward(address addr, uint postid) {
-    require(whaleNetwork.getPostTimeStamp(postid) < (block.number -10)); // IMP change 10 to 10000
+    require(whaleNetwork.getPostTimeStamp(postid) < (block.number -10000));
     require(followerClaimedReward[addr][postid] == false);
     FollowerVars memory fvars;
     fvars.followerShare = whaleNetwork.getFollowerShare(addr, postid);
