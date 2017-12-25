@@ -79,7 +79,7 @@ class Header extends Component {
                 <img style={imgStyle} src="../../images/whalecoin-logo-square.png" alt="logo" />
 
                     <Typography type="title" color="inherit">
-                      Whale Network --- Preview Release:<b> All Rewards Go To Whales</b>
+                      Whale Network --- Preview Release:<b> Version 4</b>
                     </Typography>
                     </div>
                 </Grid>
