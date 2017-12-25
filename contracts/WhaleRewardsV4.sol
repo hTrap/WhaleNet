@@ -32,7 +32,7 @@ contract WhaleRewardsV4{
   }
 
   event Claimed(
-    uint indexed block,
+    uint indexed blockNumber,
     uint reward,
     address indexed whale,
     uint moderatorReward,
@@ -86,7 +86,7 @@ contract WhaleRewardsV4{
     if (vars.moderator == 0x0000000000000000000000000000000000000000) {
       vars.followerRatio = vars.reward - vars.whaleRatio;
       followerRewards += vars.followerRatio;
-      Claimed(vars.whaleRatio, addr, 0, vars.moderator, vars.followerRatio);
+      Claimed(block.number, vars.whaleRatio, addr, 0, vars.moderator, vars.followerRatio);
     } else {
       vars.moderator.transfer(vars.moderatorRatio);
       vars.followerRatio = vars.reward - vars.whaleRatio - vars.moderatorRatio;
