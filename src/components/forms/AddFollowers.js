@@ -93,7 +93,7 @@ class AddFollowers extends Component {
     var whaleNetworkInstance
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.

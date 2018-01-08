@@ -89,10 +89,10 @@ class AddPost extends Component {
     // Declaring this for later so we can chain functions on SimpleStorage.
     var whaleRewardsInstance
     var whaleNetworkInstance
-
+    var block = this.state.web3.eth.getBlock('latest').number
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
@@ -129,15 +129,19 @@ class AddPost extends Component {
             console.log(err);
           } else {
             console.log(result);
-            whaleNetworkInstance.Posted({author:whale, id:postid},
-            { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+            whaleNetworkInstance.Posted({author:whale},
+            { fromBlock:block-20, toBlock: 'latest' }).get((error, eventResult) => {
     if (error)
       console.log('Error in myEvent event handler: ' + error);
     else
               if (error) {
+                if (error ='Error: replacement transaction underpriced') {
+
+                }
                 console.log(error);
               } else {
                 var data = eventResult[0]
+                console.log(data)
               ReactDOM.render(
               <div>{<PostAlert result={result.toString()} id={data.args.id.toNumber()} author={data.args.author} title={data.args.title}/>}</div>, document.getElementById('result'));}
             })

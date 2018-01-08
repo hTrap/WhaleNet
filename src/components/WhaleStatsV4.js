@@ -72,7 +72,7 @@ class WhaleStats extends Component {
 
       // Get accounts.
       this.state.web3.eth.getAccounts((error, accounts) => {
-        whaleRewards.deployed().then((instance) => {
+        whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
           whaleRewardsInstance = instance
 
 
@@ -107,10 +107,10 @@ class WhaleStats extends Component {
     // Declaring this for later so we can chain functions on SimpleStorage.
     var whaleRewardsInstance
     var whaleNetworkInstance
-
+    var block = this.state.web3.eth.getBlock('latest').number
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
@@ -121,13 +121,13 @@ class WhaleStats extends Component {
         whaleNetworkInstance = whaleNetwork.at(result)
         whaleNetworkInstance.Posted(
           {author:this.state.address},
-          { fromBlock:0, toBlock: 'latest' }).get((error, eventResult) => {
+          { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
   whaleNetworkInstance.FollowerAdded(
     {whale:this.state.address},
-    { fromBlock:0, toBlock: 'latest' }).get((error, followers) => {
+    { fromBlock:block-10000, toBlock: block }).get((error, followers) => {
       if (error)
         console.log('Error in myEvent event handler: ' + error);
       else
