@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import getWeb3 from '../../utils/getWeb3'
+import WhaleNetworkV4 from '../../../build/contracts/WhaleNetworkV4.json'
+import WhaleRewardsV4 from '../../../build/contracts/WhaleRewardsV4.json'
 import Button from 'material-ui/Button';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ReactDOM from 'react-dom'
@@ -10,7 +12,8 @@ import Header from '../header.js'
 import ActionGridV4 from '../actionGridV4.js'
 import WhaleInfo from '../WhaleInfo.js'
 import { withStyles } from 'material-ui/styles';
-
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 
 const divStyle = {
@@ -29,6 +32,14 @@ const styles  = {
     padding: 16,
     textAlign: 'center',
   },
+  tableroot: {
+    width: '100%',
+    marginTop: 30,
+    overflowX: 'auto',
+  },
+  table: {
+    minWidth: 700,
+  },
 };
 
 class AppV4 extends Component {
@@ -37,7 +48,8 @@ class AppV4 extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
+      web3: null,
+      items: null
     }
   }
 
@@ -56,42 +68,65 @@ class AppV4 extends Component {
   }
 
   instantiateContract() {
-    // /*
-    //  * SMART CONTRACT EXAMPLE
-    //  *
-    //  * Normally these functions would be called in the context of a
-    //  * state management library, but for convenience I've placed them here.
-    //  */
-    //
-    // const contract = require('truffle-contract')
-    // const whaleNetworkV2 = contract(WhaleNetwork)
-    // const whaleRewards = contract(WhaleRewards)
-    // whaleRewards.setProvider(this.state.web3.currentProvider)
-    // whaleNetwork.setProvider(this.state.web3.currentProvider)
-    //
-    // // Declaring this for later so we can chain functions on SimpleStorage.
-    // var whaleRewardsInstance
-    // var whaleNetworkInstance
-    //
-    // // Get accounts.
-    // this.state.web3.eth.getAccounts((error, accounts) => {
-    //   whaleRewards.deployed().then((instance) => {
-    //     whaleRewardsInstance = instance
-    //
-    //     // Stores a given value, 5 by default.
-    //     return whaleRewardsInstance.getNetworkAddress.call({from: accounts[0]})
-    //   }).then((result) => {
-    //     // Get the value from the contract to prove it worked.
-    //     console.log(result)
-    //     whaleNetworkInstance = whaleNetwork.at(result);
-    //
-    //     return whaleNetworkInstance.numWhales()
-    //   }).then((result) => {
-    //     // Update state with the result.
-    //     return this.setState({storageValue: result.c[0]})
-    //   })
-    // })
-  }
+    const contract = require('truffle-contract')
+    const whaleNetwork = contract(WhaleNetworkV4)
+    const whaleRewards = contract(WhaleRewardsV4)
+    whaleRewards.setProvider(this.state.web3.currentProvider)
+    whaleNetwork.setProvider(this.state.web3.currentProvider)
+
+    // Declaring this for later so we can chain functions on SimpleStorage.
+    var whaleRewardsInstance
+    var whaleNetworkInstance
+    var block = this.state.web3.eth.getBlock('latest').number
+    // Get accounts.
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
+        whaleRewardsInstance = instance
+
+        // Stores a given value, 5 by default.
+        return whaleRewardsInstance.getNetworkAddress()
+      }).then((result) => {
+        // Get the value from the contract to prove it worked.
+        console.log(result)
+        whaleNetworkInstance = whaleNetwork.at(result)
+        whaleNetworkInstance.Posted({},
+          { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
+  if (error)
+    console.log('Error in myEvent event handler: ' + error);
+  else
+
+  console.log(eventResult)
+  var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+  ReactDOM.render(
+    <Grid item xs={12}>
+    <Paper className={this.props.classes.tableroot}>
+    <Table className={this.props.classes.table}>
+    <TableHead>
+      <TableRow>
+        <TableCell><h2>Active Posts</h2></TableCell>
+
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {items.map(item => {
+        return (
+
+          <TableRow key={item.transactionHash}>
+            <TableCell>ID: {item.args.id.toNumber()} <br></br> Author: {item.args.author}<br></br> Block: {item.blockNumber} <br></br>Title: {item.args.title} </TableCell>
+
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+  </Paper>
+          </Grid>
+    , document.getElementById('active-posts'));
+
+})
+})
+})
+}
 
 
   render() {
@@ -110,6 +145,8 @@ class AppV4 extends Component {
               {<ActionGridV4/>}
               </Paper>
             </Grid>
+
+            <div id="active-posts"> </div>
 
           </Grid>
           </div>
