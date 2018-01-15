@@ -80,12 +80,8 @@ class FollowerSocial extends Component {
           {<FollowerRewardClaimV4/>}
           </Paper>
         </Grid>
-        <Grid item xs={12}>
-          <Paper className={this.props.classes.paper}>
-          <h2>Multi Claim</h2>
-          {<FollowerRewardClaimAllPosts/>}
-          </Paper>
-        </Grid>
+      
+        <div id='follower_logs'> </div>
       </Grid>
       </div>
       </div>

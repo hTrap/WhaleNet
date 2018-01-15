@@ -14,6 +14,8 @@ import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import RewardAlert from '../alerts/rewardAlert.js';
 import Alert from '../alert.js';
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 
 
@@ -87,7 +89,7 @@ class FollowerRewardClaimBlockCheck extends Component {
 
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
@@ -96,11 +98,45 @@ class FollowerRewardClaimBlockCheck extends Component {
         // Get the value from the contract to prove it worked.
         console.log(result)
         whaleNetwork.at(result).then((whaleNetworkInstance) => {
-          return whaleNetworkInstance.getPostTimeStamp(this.state.post)
-        }).then((block) => {
+
+          whaleNetworkInstance.getPostTimeStamp(this.state.post).then((block) => {
           console.log(block)
-          ReactDOM.render(
-          <div>{<Alert result={block.toNumber() + 10000}/>}</div>, document.getElementById('result'));
+          whaleNetworkInstance.FollowerAdded(
+            {postid:this.state.post},
+            { fromBlock:block.toNumber(), toBlock: block.toNumber()+10000 }).get((error, followers) => {
+              if (error)
+                console.log('Error in myEvent event handler: ' + error);
+              else
+              console.log(followers)
+          console.log(followers)
+          var items = followers.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+
+          console.log(block)
+          ReactDOM.render(  <div><Grid item xs={12}>
+            <Paper className={this.props.classes.tableroot}>
+    <Table className={this.props.classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell><h2>Followers</h2></TableCell>
+<TableCell><h2>Total: {items.length}</h2></TableCell>
+<TableCell><h2>Claimable At {block.toNumber()+10000}</h2></TableCell>
+
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {items.map(item => {
+          return (
+            <TableRow key={item.transactionHash}>
+              <TableCell>follower: {item.args.follower} <br></br> Block: {item.blockNumber} <br></br>Moderator: {item.args.moderator} </TableCell>
+
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </Paper>
+          </Grid></div>
+        , document.getElementById('follower_logs'));})})
         // Stores a given value, 5 by default
 
 
@@ -126,7 +162,7 @@ class FollowerRewardClaimBlockCheck extends Component {
                 </Grid>
 
               <Grid item xs={12}>
-                <Button raised type="submit" color="primary">Check post claimable Block</Button>
+                <Button raised type="submit" color="primary">Check Post!</Button>
 
                 </Grid>
                 </Grid>
