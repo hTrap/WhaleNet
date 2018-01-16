@@ -114,7 +114,6 @@ class FollowerStats extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
-
         // Stores a given value, 5 by default.
         return whaleRewardsInstance.getNetworkAddress()
       }).then((result) => {
@@ -123,13 +122,13 @@ class FollowerStats extends Component {
         whaleNetworkInstance = whaleNetwork.at(result)
         whaleNetworkInstance.FollowerAdded(
           {follower:this.state.address},
-          { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
+          { fromBlock:356101, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
   whaleRewardsInstance.FollowerClaimed(
     {follower:this.state.address},
-    { fromBlock:block-10000, toBlock: block }).get((error, followerClaims) => {
+    { fromBlock:356101, toBlock: 'latest' }).get((error, followerClaims) => {
       if (error)
         console.log('Error in myEvent event handler: ' + error);
       else
