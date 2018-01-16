@@ -122,13 +122,13 @@ class FollowerStats extends Component {
         whaleNetworkInstance = whaleNetwork.at(result)
         whaleNetworkInstance.FollowerAdded(
           {follower:this.state.address},
-          { fromBlock:356101, toBlock: 'latest' }).get((error, eventResult) => {
+          { fromBlock:356091, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
   whaleRewardsInstance.FollowerClaimed(
     {follower:this.state.address},
-    { fromBlock:356101, toBlock: 'latest' }).get((error, followerClaims) => {
+    { fromBlock:356091, toBlock: 'latest' }).get((error, followerClaims) => {
       if (error)
         console.log('Error in myEvent event handler: ' + error);
       else

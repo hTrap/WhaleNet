@@ -121,13 +121,13 @@ class WhaleStats extends Component {
         whaleNetworkInstance = whaleNetwork.at(result)
         whaleNetworkInstance.Posted(
           {author:this.state.address},
-          { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
+          { fromBlock:340000, toBlock: 'latest' }).get((error, eventResult) => {
   if (error)
     console.log('Error in myEvent event handler: ' + error);
   else
   whaleNetworkInstance.FollowerAdded(
     {whale:this.state.address},
-    { fromBlock:block-10000, toBlock: block }).get((error, followers) => {
+    { fromBlock:340000, toBlock: 'latest' }).get((error, followers) => {
       if (error)
         console.log('Error in myEvent event handler: ' + error);
       else
