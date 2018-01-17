@@ -85,7 +85,7 @@ class RewardClaimV4 extends Component {
     var whale = this.state.whale
     // Get accounts.
     this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.deployed().then((instance) => {
+      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
         whaleRewardsInstance = instance
 
         // Stores a given value, 5 by default.
@@ -124,7 +124,7 @@ class RewardClaimV4 extends Component {
           } else {
             console.log(result);
             whaleRewardsInstance.Claimed({whale:whale},
-            { fromBlock:blockBeforeTransaction, toBlock: 'latest' }).get((error, eventResult) => {
+            { fromBlock:blockBeforeTransaction-5, toBlock: 'latest' }).get((error, eventResult) => {
     if (error)
       console.log('Error in myEvent event handler: ' + error);
     else {

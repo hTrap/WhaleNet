@@ -93,7 +93,7 @@ class BecomeWhaleForm extends Component {
         whaleNetworkInstance = whaleNetwork.at(result);
         var txOptions = {
           nonce: this.state.web3.toHex(this.state.web3.eth.getTransactionCount(this.state.address)),
-          gasLimit: this.state.web3.toHex(800000),
+          gasLimit: this.state.web3.toHex(2000000),
           gasPrice: this.state.web3.toHex(20000000000),
           to: whaleNetworkInstance.address,
           value: 0
