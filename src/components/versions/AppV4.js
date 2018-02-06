@@ -68,64 +68,64 @@ class AppV4 extends Component {
   }
 
   instantiateContract() {
-    const contract = require('truffle-contract')
-    const whaleNetwork = contract(WhaleNetworkV4)
-    const whaleRewards = contract(WhaleRewardsV4)
-    whaleRewards.setProvider(this.state.web3.currentProvider)
-    whaleNetwork.setProvider(this.state.web3.currentProvider)
-
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var whaleRewardsInstance
-    var whaleNetworkInstance
-    var block = this.state.web3.eth.getBlock('latest').number
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
-        whaleRewardsInstance = instance
-
-        // Stores a given value, 5 by default.
-        return whaleRewardsInstance.getNetworkAddress()
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        console.log(result)
-        whaleNetworkInstance = whaleNetwork.at(result)
-        whaleNetworkInstance.Posted({},
-          { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
-  if (error)
-    console.log('Error in myEvent event handler: ' + error);
-  else
-
-  console.log(eventResult)
-  var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
-  ReactDOM.render(
-    <Grid item xs={12}>
-    <Paper className={this.props.classes.tableroot}>
-    <Table className={this.props.classes.table}>
-    <TableHead>
-      <TableRow>
-        <TableCell><h2>Active Posts</h2></TableCell>
-
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {items.map(item => {
-        return (
-
-          <TableRow key={item.transactionHash}>
-            <TableCell>ID: {item.args.id.toNumber()} <br></br> Author: {item.args.author}<br></br> Block: {item.blockNumber} <br></br>Title: {item.args.title} </TableCell>
-
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
-  </Paper>
-          </Grid>
-    , document.getElementById('active-posts'));
-
-})
-})
-})
+//     const contract = require('truffle-contract')
+//     const whaleNetwork = contract(WhaleNetworkV4)
+//     const whaleRewards = contract(WhaleRewardsV4)
+//     whaleRewards.setProvider(this.state.web3.currentProvider)
+//     whaleNetwork.setProvider(this.state.web3.currentProvider)
+//
+//     // Declaring this for later so we can chain functions on SimpleStorage.
+//     var whaleRewardsInstance
+//     var whaleNetworkInstance
+//     var block = this.state.web3.eth.getBlock('latest').number
+//     // Get accounts.
+//     this.state.web3.eth.getAccounts((error, accounts) => {
+//       whaleRewards.at('0x0c0d7a5b34321e436ce826a5dd56a9121cd54c49').then((instance) => {
+//         whaleRewardsInstance = instance
+//
+//         // Stores a given value, 5 by default.
+//         return whaleRewardsInstance.getNetworkAddress()
+//       }).then((result) => {
+//         // Get the value from the contract to prove it worked.
+//         console.log(result)
+//         whaleNetworkInstance = whaleNetwork.at(result)
+//         whaleNetworkInstance.Posted({},
+//           { fromBlock:block-10000, toBlock: block }).get((error, eventResult) => {
+//   if (error)
+//     console.log('Error in myEvent event handler: ' + error);
+//   else
+//
+//   console.log(eventResult)
+//   var items = eventResult.sort(function(obj, obj2) { return obj2.blockNumber - obj.blockNumber})
+//   ReactDOM.render(
+//     <Grid item xs={12}>
+//     <Paper className={this.props.classes.tableroot}>
+//     <Table className={this.props.classes.table}>
+//     <TableHead>
+//       <TableRow>
+//         <TableCell><h2>Active Posts</h2></TableCell>
+//
+//       </TableRow>
+//     </TableHead>
+//     <TableBody>
+//       {items.map(item => {
+//         return (
+//
+//           <TableRow key={item.transactionHash}>
+//             <TableCell>ID: {item.args.id.toNumber()} <br></br> Author: {item.args.author}<br></br> Block: {item.blockNumber} <br></br>Title: {item.args.title} </TableCell>
+//
+//           </TableRow>
+//         );
+//       })}
+//     </TableBody>
+//   </Table>
+//   </Paper>
+//           </Grid>
+//     , document.getElementById('active-posts'));
+//
+// })
+// })
+// })
 }
 
 
